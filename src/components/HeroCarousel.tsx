@@ -56,12 +56,12 @@ const HeroCarousel = () => {
       {/* Hero Content */}
       <div className="relative h-full flex items-center justify-center text-center px-6">
         <div className="max-w-5xl mx-auto animate-fade-up">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary mb-6 leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
             Shree Anna, Reimagined —
             <br />
-            <span className="text-accent">Connecting Farm to Consumer, Digitally</span>
+            <span className="text-primary">Connecting Farm to Consumer, Digitally</span>
           </h1>
-          <p className="text-lg md:text-xl lg:text-2xl text-primary/90 mb-10 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl lg:text-2xl text-white mb-10 max-w-3xl mx-auto drop-shadow-md">
             KrishiNetra unifies farmers, SHGs, buyers, and consumers through a
             transparent millet marketplace.
           </p>
@@ -75,7 +75,7 @@ const HeroCarousel = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-earth rounded-xl px-8 py-6 text-lg transition-smooth"
+              className="border-2 border-white text-white hover:bg-white hover:text-earth rounded-xl px-8 py-6 text-lg transition-smooth"
             >
               Sell My Produce
             </Button>
@@ -86,15 +86,15 @@ const HeroCarousel = () => {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-primary/20 hover:bg-primary/40 backdrop-blur-sm transition-smooth"
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm transition-smooth"
       >
-        <ChevronLeft className="h-6 w-6 text-primary" />
+        <ChevronLeft className="h-6 w-6 text-white" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-primary/20 hover:bg-primary/40 backdrop-blur-sm transition-smooth"
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm transition-smooth"
       >
-        <ChevronRight className="h-6 w-6 text-primary" />
+        <ChevronRight className="h-6 w-6 text-white" />
       </button>
 
       {/* Slide Indicators */}
@@ -105,8 +105,8 @@ const HeroCarousel = () => {
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-smooth ${
               index === currentSlide
-                ? "bg-primary w-8"
-                : "bg-primary/40 hover:bg-primary/60"
+                ? "bg-white w-8"
+                : "bg-white/40 hover:bg-white/60"
             }`}
           />
         ))}
@@ -114,8 +114,8 @@ const HeroCarousel = () => {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce-soft">
-        <div className="w-6 h-10 border-2 border-primary/50 rounded-full flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 bg-primary/50 rounded-full animate-pulse-soft" />
+        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
+          <div className="w-1.5 h-3 bg-white/50 rounded-full animate-pulse-soft" />
         </div>
       </div>
     </section>
