@@ -101,7 +101,7 @@ All colors MUST be HSL.
 
 @layer components {
   .hero-overlay {
-    background: var(--gradient-hero);
+    background: rgba(0, 0, 0, 0.4);
   }
   
   .organic-shadow {
