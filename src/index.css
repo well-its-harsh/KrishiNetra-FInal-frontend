@@ -8,25 +8,25 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* KrishiNetra Nature-Inspired Palette */
+    /* KrishiNetra Nature-Inspired Palette - EXACT HEX VALUES */
     --background: 0 0% 100%;
-    --foreground: 142 85% 8%;
+    --foreground: 142 87% 12%; /* #043915 Dark Earth Green */
     
-    /* Millet Yellow - Primary Brand Color */
-    --primary: 59 100% 77%;
-    --primary-foreground: 142 85% 8%;
+    /* Millet Yellow #FFFD8F - Primary Brand Color */
+    --primary: 58 100% 78%; /* hsl equivalent of #FFFD8F */
+    --primary-foreground: 142 87% 12%;
     
-    /* Deep Forest Green - Secondary */
-    --secondary: 126 47% 35%;
-    --secondary-foreground: 59 100% 77%;
+    /* Deep Forest Green #4C763B - Secondary */
+    --secondary: 102 33% 36%; /* hsl equivalent of #4C763B */
+    --secondary-foreground: 58 100% 78%;
     
-    /* Soft Sage Green - Accent */
-    --accent: 88 42% 67%;
-    --accent-foreground: 142 85% 8%;
+    /* Sage Green #B0CE88 - Accent */
+    --accent: 88 42% 67%; /* hsl equivalent of #B0CE88 */
+    --accent-foreground: 142 87% 12%;
     
-    /* Dark Earth Green - Deep Accent */
-    --earth: 142 85% 8%;
-    --earth-foreground: 59 100% 77%;
+    /* Dark Earth Green #043915 - Deep Accent */
+    --earth: 142 87% 12%; /* hsl equivalent of #043915 */
+    --earth-foreground: 58 100% 78%;
     
     --card: 0 0% 100%;
     --card-foreground: 142 85% 8%;
@@ -44,7 +44,7 @@ All colors MUST be HSL.
     --input: 88 30% 85%;
     --ring: 126 47% 35%;
     
-    --radius: 0.875rem;
+    --radius: 0.875rem; /* 14px - within 12-16px range */
     
     /* Organic Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(142 85% 8% / 0.7), hsl(126 47% 35% / 0.7));
@@ -90,19 +90,26 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Noto Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 700;
   }
+  
+  /* Hindi text support */
+  [lang="hi"], .hindi {
+    font-family: 'Noto Sans Devanagari', 'Noto Sans', sans-serif;
+  }
 }
 
 @layer components {
   .hero-overlay {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.44); /* #00000070 = rgba(0,0,0,0.44) */
   }
+  
+  
   
   .organic-shadow {
     box-shadow: var(--shadow-soft);
@@ -172,6 +179,58 @@ All colors MUST be HSL.
     transform-style: preserve-3d;
     perspective: 1000px;
   }
+  
+  /* Ripple Effect */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  .ripple:active::after {
+    width: 300px;
+    height: 300px;
+  }
+  
+  /* Parallax Container - Optimized for performance */
+  .parallax-slow {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+    contain: layout style paint;
+  }
+  
+  /* Floating Text - Optimized */
+  .floating-text {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  
+  /* 3D Tilt Effect */
+  .tilt-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+  }
 }
 
 @keyframes fade-up {
@@ -234,8 +293,218 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ==================== AUTH SLIDING PANEL STYLES ==================== */
+.container-auth {
+  position: relative;
+  width: 100%;
+  min-height: 600px;
+  overflow: visible !important;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
+}
+
+.sign-in-container,
+.sign-up-container {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 10 !important;
+  background: #FFFFFF;
+  padding: 2.5rem;
+  box-sizing: border-box;
+  overflow-y: auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sign-in-container {
+  left: 0;
+}
+
+.sign-up-container {
+  left: 50%;
+  border-left: 1px solid hsl(var(--border));
+}
+
+.container-auth.right-panel-active .sign-in-container {
+  transform: translateX(-100%);
+}
+
+
+.container-auth.right-panel-active .sign-up-container {
+  transform: translateX(-100%);
+}
+
+.sign-in-form,
+.sign-up-form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem;
+  background: white;
+}
+
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 5 !important;
+}
+
+.container-auth.right-panel-active .overlay-container {
+  transform: translateX(-100%);
+}
+
+.overlay {
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  background: linear-gradient(to right, #4C763B, #043915);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.container-auth.right-panel-active .overlay {
+  transform: translateX(50%);
+}
+
+.overlay-panel {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 50px;
+  height: 100%;
+  width: 50%;
+  text-align: center;
+  transform: translateX(0);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.overlay-left {
+  transform: translateX(-20%);
+}
+
+.container-auth.right-panel-active .overlay-left {
+  transform: translateX(0);
+}
+
+.overlay-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+.container-auth.right-panel-active .overlay-right {
+  transform: translateX(20%);
+}
+
+.ghost-button {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 12px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+  min-height: 44px;
+}
+
+.ghost-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.03);
+}
+
+.ghost-button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sign-in-container,
+  .sign-up-container {
+    width: 100%;
+  }
+  
+  .sign-up-container {
+    left: 0;
+    transform: translateX(100%);
+    z-index: 1;
+}
+
+.container-auth.right-panel-active .sign-up-container {
+    transform: translateX(0);
+    z-index: 5;
+}
+
+  
+  .overlay-container {
+    display: none;
+  }
+}
+
 /* Parallax Container */
 .parallax-container {
   transform-style: preserve-3d;
   perspective: 1px;
+}
+
+/* Extended Hero Scroll */
+.hero-extended {
+  min-height: 100vh;
+  height: 120vh; /* Extends beyond viewport */
+}
+
+/* Auto-scroll Animation */
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 12px)); /* Account for gap */
+  }
+}
+
+.auto-scroll {
+  display: flex;
+  animation: scroll-horizontal 50s linear infinite;
+  will-change: transform;
+}
+
+.auto-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Auto-scroll container */
+.auto-scroll-container {
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+/* Icon Bounce on Hover */
+@keyframes icon-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.icon-bounce:hover {
+  animation: icon-bounce 0.6s ease-in-out;
 }
