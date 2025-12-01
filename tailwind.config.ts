@@ -43,6 +43,18 @@ export default {
           DEFAULT: "hsl(var(--earth))",
           foreground: "hsl(var(--earth-foreground))",
         },
+        rust: {
+          DEFAULT: "hsl(var(--rust))",
+          foreground: "hsl(var(--rust-foreground))",
+        },
+        mustard: {
+          DEFAULT: "hsl(var(--mustard))",
+          foreground: "hsl(var(--mustard-foreground))",
+        },
+        cream: {
+          DEFAULT: "hsl(var(--cream))",
+          foreground: "hsl(var(--cream-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

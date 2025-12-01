@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import heroFarm from "@/assets/hero-millet-farm.jpg";
-import heroGrains from "@/assets/hero-millet-grains.jpg";
-import heroShg from "@/assets/hero-shg-women.jpg";
-import heroFarmer from "@/assets/hero-farmer.jpg";
+import hero1 from "@/assets/1.png";
+import hero2 from "@/assets/2.png";
+import hero3 from "@/assets/3.png";
+import hero4 from "@/assets/4.png";
+import hero5 from "@/assets/5.png";
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -15,10 +16,11 @@ const HeroCarousel = () => {
   const { language, t } = useLanguage();
 
   const slides = [
-    { image: heroFarm, alt: "Millet Farm" },
-    { image: heroGrains, alt: "Millet Grains" },
-    { image: heroShg, alt: "SHG Women" },
-    { image: heroFarmer, alt: "Farmer in Field" },
+    { image: hero1, alt: "Millet Ecosystem" },
+    { image: hero2, alt: "Farmers & Agriculture" },
+    { image: hero3, alt: "Millet Products" },
+    { image: hero4, alt: "Value Chain" },
+    { image: hero5, alt: "Community Impact" },
   ];
 
   useEffect(() => {
@@ -181,39 +183,36 @@ const HeroCarousel = () => {
         ))}
       </div>
 
-      {/* Enhanced Dark Overlay with Gradient Shadow for Text Readability */}
-      <div className="absolute inset-0 hero-overlay hero-overlay-gradient" />
+      {/* Enhanced Dark Overlay with Soft Black Tint for Text Readability */}
+      <div className="absolute inset-0 bg-black/40" />
 
-      {/* Hero Content - Floating Text */}
-      <div className="relative h-screen flex items-center justify-center text-center px-6">
+      {/* Hero Content - Left-Aligned Premium Text */}
+      <div className="relative h-screen flex items-end pb-20 md:pb-32 px-6 md:px-12 lg:px-20">
         <div 
           ref={contentRef} 
-          className="max-w-5xl mx-auto floating-text"
+          className="max-w-4xl floating-text text-left"
           style={{
             willChange: 'transform, opacity',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
           }}
         >
-          <h1 className={`text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-6 leading-tight drop-shadow-2xl ${language === "HI" ? "hindi" : ""}`}>
+          <p className={`text-lg md:text-xl font-semibold text-white/90 mb-4 tracking-wide uppercase ${language === "HI" ? "hindi" : ""}`}>
+            {t("hero.tagline")}
+          </p>
+          <h1 className={`text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-6 leading-tight drop-shadow-2xl ${language === "HI" ? "hindi" : ""}`}>
             {t("hero.title")}
           </h1>
-          <p className={`text-lg md:text-xl lg:text-2xl text-white mb-10 max-w-3xl mx-auto ${language === "HI" ? "hindi" : ""}`}>
-            {t("hero.subtitle")}
+          <p className={`text-base md:text-lg lg:text-xl text-white/95 mb-10 max-w-3xl leading-relaxed ${language === "HI" ? "hindi" : ""}`}>
+            {t("hero.oneLiner")}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Button
               size="lg"
-              className={`ripple bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-[14px] px-8 py-6 text-lg hover-glow transition-smooth hover:scale-105 ${language === "HI" ? "hindi" : ""}`}
+              className={`ripple bg-rust hover:bg-rust/90 text-rust-foreground rounded-[14px] px-10 py-7 text-lg font-semibold hover-glow transition-smooth hover:scale-105 shadow-xl ${language === "HI" ? "hindi" : ""}`}
+              onClick={() => window.location.href = '/signup'}
             >
               {t("hero.explore")}
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className={`ripple border-2 border-primary text-primary hover:bg-primary hover:text-earth rounded-[14px] px-8 py-6 text-lg transition-smooth hover:scale-105 bg-primary/10 ${language === "HI" ? "hindi" : ""}`}
-            >
-              {t("hero.sell")}
             </Button>
           </div>
         </div>

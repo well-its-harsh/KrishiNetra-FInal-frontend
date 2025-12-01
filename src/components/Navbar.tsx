@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sprout } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navbar = () => {
@@ -11,19 +11,27 @@ const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      setIsScrolled(currentScrollY > 50);
-      
-      // Hide on scroll down, show on scroll up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          setIsScrolled(currentScrollY > 50);
+          
+          // Hide on scroll down, show on scroll up - smooth transitions
+          if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            setIsVisible(false);
+          } else if (currentScrollY < lastScrollY) {
+            setIsVisible(true);
+          }
+          
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-      
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -43,29 +51,34 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-250 ease-out ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
+        isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       } ${
         isScrolled
-          ? "bg-[#043915CC] backdrop-blur-md organic-shadow-medium"
+          ? "bg-earth/95 backdrop-blur-md organic-shadow-medium"
           : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-white">KrishiNetra</div>
-            <div className="hidden sm:block text-xs text-primary hindi">श्री अन्न</div>
+          {/* Logo with Icon */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/20 backdrop-blur-sm">
+              <Sprout className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex flex-col">
+              <div className="text-xl md:text-2xl font-bold text-white tracking-tight">Krishi-Netra</div>
+              <div className="hidden sm:block text-xs text-primary/90 font-medium hindi">श्री अन्न</div>
+            </div>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6">
             {menuItems.map((item) => (
               <a
                 key={item.key}
                 href={`#${item.href}`}
-                className={`text-sm font-medium text-white hover:text-primary transition-smooth ${language === "HI" ? "hindi" : ""}`}
+                className={`text-sm font-semibold text-white/90 hover:text-primary transition-all duration-200 hover:scale-105 ${language === "HI" ? "hindi" : ""}`}
               >
                 {t(item.key)}
               </a>
@@ -97,18 +110,11 @@ const Navbar = () => {
                 HI
               </button>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className={`rounded-[14px] border-white/30 text-white hover:bg-white/10 ${language === "HI" ? "hindi" : ""}`}
-              onClick={() => window.location.href = '/auth'}
-            >
-              {t("nav.login")}
-            </Button>
+            
             <Button
               size="sm"
-              className={`bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-[14px] ${language === "HI" ? "hindi" : ""}`}
-              onClick={() => window.location.href = '/auth'}
+              className={`bg-rust hover:bg-rust/90 text-rust-foreground rounded-[12px] font-semibold shadow-lg transition-all duration-200 hover:scale-105 ${language === "HI" ? "hindi" : ""}`}
+              onClick={() => window.location.href = '/signup'}
             >
               {t("nav.signup")}
             </Button>
