@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, ShoppingCart, Building, Users } from "lucide-react";
 import type { SignUpData } from "./NewSignUpForm";
+import { useNavigate } from "react-router-dom";
 
 interface SignUpStep1NewProps {
   formData: SignUpData;
@@ -16,6 +18,7 @@ interface SignUpStep1NewProps {
 
 const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProps) => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
@@ -73,6 +76,10 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
       newErrors.password = passwordCheck.message;
     }
 
+    if (!formData.role) {
+      newErrors.role = language === "HI" ? "कृपया एक भूमिका चुनें" : "Please select a role";
+    }
+
     if (!formData.terms_accepted) {
       newErrors.terms = language === "HI" ? "कृपया नियम और शर्तें स्वीकार करें" : "Please accept terms and conditions";
     }
@@ -88,28 +95,29 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
 
     setLoading(true);
     try {
-      // Call backend to create user
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          name: formData.full_name,
-          email: formData.email,
-          password: formData.password,
-          role: 'CONSUMER', // Default role, will be updated in step 2
-        }),
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+      const payload = {
+        name: formData.full_name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      };
+
+      const { data: userData } = await axios.post<{ id: number }>(
+        `${API_BASE_URL}/auth/register`,
+        payload,
+        {
+          withCredentials: true,
+        }
+      );
+
+      updateFormData({
+        user_id: userData.id,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Registration failed');
-      }
-
-      const userData = await response.json();
-      updateFormData({ user_id: userData.id,email: formData.email,
-  password: formData.password});
       onNext();
     } catch (error: any) {
       setErrors({ 
@@ -133,12 +141,6 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
       onSubmit={handleSubmit}
       className="space-y-6"
     >
-      <div>
-        <h3 className={`text-2xl font-bold mb-2 text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
-          {language === "HI" ? "चरण 1: आपकी खाता जानकारी" : "Step 1: Your Account Details"}
-        </h3>
-      </div>
-
       <div>
         <Label htmlFor="full_name" className={`mb-2 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
           {language === "HI" ? "पूरा नाम" : "Full Name"} <span className="text-[#8C483F]">*</span>
@@ -219,6 +221,63 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
         )}
         {errors.password && (
           <p className="mt-1 text-sm text-[#8C483F]">{errors.password}</p>
+        )}
+      </div>
+
+      <div>
+        <Label className={`mb-3 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
+          {language === "HI" ? "अपनी भूमिका चुनें" : "Select Your Role"} <span className="text-[#8C483F]">*</span>
+        </Label>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[{
+            id: 'CONSUMER' as const,
+            icon: ShoppingCart,
+            title: language === "HI" ? "उपभोक्ता" : "Consumer",
+            description: language === "HI"
+              ? "मिलेट उत्पाद खरीदें और जागरूकता फैलाएं"
+              : "Purchase millet products and spread awareness",
+          }, {
+            id: 'FPO' as const,
+            icon: Users,
+            title: language === "HI" ? "एफपीओ" : "FPO",
+            description: language === "HI"
+              ? "किसान उत्पादक संगठन"
+              : "Farmer Producer Organization",
+          }, {
+            id: 'BUSINESS' as const,
+            icon: Building,
+            title: language === "HI" ? "थोक विक्रेता" : "Wholeseller",
+            description: language === "HI"
+              ? "अपने मिलेट उत्पाद बेचें"
+              : "Sell your millet products",
+          }].map((role) => {
+            const Icon = role.icon;
+            const isSelected = formData.role === role.id;
+
+            return (
+              <button
+                key={role.id}
+                type="button"
+                onClick={() => updateFormData({ role: role.id })}
+                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] ${
+                  isSelected
+                    ? 'border-[#7C8B56] bg-[#7C8B56]/10 shadow-lg'
+                    : 'border-[#D1B48C] bg-white hover:border-[#7C8B56]'
+                } cursor-pointer text-left`}
+              >
+                <Icon className={`h-8 w-8 mb-2 ${isSelected ? 'text-[#7C8B56]' : 'text-[#D1B48C]'}`} />
+                <h4 className={`font-semibold mb-1 text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
+                  {role.title}
+                </h4>
+                <p className={`text-sm text-[#7C8B56] ${language === "HI" ? "hindi" : ""}`}>
+                  {role.description}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+        {errors.role && (
+          <p className="mt-1 text-sm text-[#8C483F]">{errors.role}</p>
         )}
       </div>
 

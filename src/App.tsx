@@ -7,8 +7,13 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Signup from "./pages/Signup";
+import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 import Marketplace from "./pages/dashboard/consumer/Marketplace";
+import SellerMarketplace from "./pages/dashboard/seller/SellerMarketplace";
+import CreateAuctionPage from "./pages/dashboard/seller/CreateAuctionPage";
+import MyLotsPage from "./pages/dashboard/seller/MyLotsPage";
+import AuctionDetailPage from "./pages/dashboard/seller/AuctionDetailPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 console.log('App component is rendering');
@@ -25,6 +30,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<SignIn />} />
           
           {/* Dashboard Routes */}
           <Route 
@@ -34,6 +40,43 @@ const App = () => (
                 <Marketplace />
               </ProtectedRoute>
             } 
+          />
+
+          <Route
+            path="/dashboard/seller"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <SellerMarketplace />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Seller auction routes */}
+          <Route
+            path="/auction/create"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <CreateAuctionPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/auction/my-lots"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <MyLotsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/auction/:id"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <AuctionDetailPage />
+              </ProtectedRoute>
+            }
           />
           
           {/* Redirect old consumer path to new dashboard path */}

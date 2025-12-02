@@ -22,12 +22,12 @@ import {
   ArrowUpRight,
   Compass,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Navigation } from "@/components/Navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/consumer/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/consumer/card";
+import { Badge } from "@/components/ui/consumer/badge";
+import { Navigation } from "@/components/nagivation/Navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/consumer/avatar";
+import { Skeleton } from "@/components/ui/consumer/skeleton";
 import { cn } from "@/lib/utils";
 import { ResponsiveContainer, AreaChart, Area, CartesianGrid, Tooltip as RechartsTooltip, XAxis, PieChart, Pie, Cell } from "recharts";
 import pearlMilletImage from "@/assets/product-pearl-millet.jpg";

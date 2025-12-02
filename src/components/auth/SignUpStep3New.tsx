@@ -130,8 +130,8 @@ const SignUpStep3New = ({
           }`}
         >
           {language === "HI"
-            ? "चरण 3: सत्यापन"
-            : "Step 3: Verification"}
+            ? "चरण 2: सत्यापन"
+            : "Step 2: Verification"}
         </h3>
         <p className={`text-[#7C8B56] ${language === "HI" ? "hindi" : ""}`}>
           {language === "HI"

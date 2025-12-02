@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URl|| "http://127.0.0.1:8000";
 
 interface SignUpStep5NewProps {
   formData: SignUpData;
@@ -30,7 +30,13 @@ const SignUpStep5New = ({ formData }: SignUpStep5NewProps) => {
       return;
     }
 
-    // 1️⃣ Auto login using stored email + password
+    // Completely reset cookies/session
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    // Login
     const loginRes = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       credentials: "include",
@@ -42,46 +48,46 @@ const SignUpStep5New = ({ formData }: SignUpStep5NewProps) => {
     });
 
     if (!loginRes.ok) throw new Error("Auto login failed");
-    const loginData = await loginRes.json(); 
-    console.log("🔑 LOGIN RESPONSE =>", loginData);
+    const loginData = await loginRes.json();
 
     const userId = loginData.user_id;
-    const role = loginData.role; // backend sends uppercase role
 
-    // 2️⃣ Fetch full profile
+    // Fetch updated profile
     const profileRes = await fetch(`${API_BASE}/users/${userId}`, {
       method: "GET",
       credentials: "include",
     });
 
     if (!profileRes.ok) throw new Error("Failed to fetch profile");
+
     const fullUser = await profileRes.json();
-    // convert backend format → AuthContext UI format
-setUser({
-  id: fullUser.id,
-  email: fullUser.email,
-  name: fullUser.name,
-  role: mapBackendRole(fullUser.role),
-  email_verified: fullUser.is_authenticated,
-  verification_status: fullUser.is_active ? "verified" : "pending",
-});
 
+    // Save into AuthContext (true final state)
+    const backendRole = fullUser.role;
+    setUser({
+      id: fullUser.id,
+      email: fullUser.email,
+      name: fullUser.name,
+      role: mapBackendRole(backendRole),
+      email_verified: fullUser.is_authenticated,
+      verification_status: fullUser.is_active ? "verified" : "pending",
+    });
 
-
-    // 3️⃣ Redirect by role
-    if (role === "CONSUMER") navigate("/dashboard/consumer", { replace: true });
-    else if (role === "FPO") navigate("/dashboard/fpo", { replace: true });
-    else if (role === "BUSINESS") navigate("/dashboard/seller", { replace: true });
-    else if (role === "ADMIN") navigate("/dashboard/admin", { replace: true });
+    // Redirect using REAL backend role
+    if (backendRole === "CONSUMER") navigate("/dashboard/consumer", { replace: true });
+    else if (backendRole === "FPO") navigate("/dashboard/fpo", { replace: true });
+    else if (backendRole === "BUSINESS") navigate("/dashboard/seller", { replace: true });
+    else if (backendRole === "ADMIN") navigate("/dashboard/admin", { replace: true });
     else navigate("/", { replace: true });
 
   } catch (err) {
-    toast.error("Unable to load dashboard");
     console.error(err);
+    toast.error("Unable to load dashboard");
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
@@ -136,7 +142,7 @@ setUser({
         </Button>
 
         <Button
-          onClick={() => navigate("/auth")}
+          onClick={() => navigate("/signin")}
           variant="outline"
           className="border-[#7C8B56] text-[#7C8B56] hover:bg-[#7C8B56]/10 rounded-xl h-[52px] px-8"
         >

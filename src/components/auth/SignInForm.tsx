@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { loginUser, forgotPassword } from "@/lib/api";
+import { forgotPassword } from "@/lib/api";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SignInFormProps {
   onSwitchToSignUp: () => void;
@@ -20,10 +21,10 @@ interface SignInFormProps {
 
 const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
   const { language, t } = useLanguage();
+  const { login, error: authError, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
 
@@ -48,21 +49,15 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
     e.preventDefault();
     
     if (!validate()) return;
-    
-    setLoading(true);
     try {
-      const response = await loginUser({ email, password });
-      // TODO: Store token and redirect to dashboard
-      console.log("Login successful:", response);
-      // Redirect logic here
-    } catch (error) {
-      setErrors({ 
-        submit: language === "HI" 
-          ? "लॉगिन असफल। कृपया पुनः प्रयास करें।" 
-          : "Login failed. Please try again." 
+      await login(email, password);
+    } catch {
+      // AuthContext already sets its own error; just mirror a generic message here if needed
+      setErrors({
+        submit: language === "HI"
+          ? "लॉगिन असफल। कृपया पुनः प्रयास करें।"
+          : "Login failed. Please try again."
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -150,16 +145,16 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
           </button>
         </div>
 
-        {errors.submit && (
-          <p className="text-sm text-red-600">{errors.submit}</p>
+        {(errors.submit || authError) && (
+          <p className="text-sm text-red-600">{errors.submit || authError}</p>
         )}
 
         <Button
           type="submit"
-          disabled={loading}
+          disabled={authLoading}
           className="w-full h-[44px] bg-[#4C763B] hover:bg-[#043915] text-white rounded-[12px] transition-all duration-180 hover:scale-[1.03] hover:shadow-lg"
         >
-          {loading 
+          {authLoading 
             ? (language === "HI" ? "लॉग इन हो रहा है..." : "Signing in...")
             : (language === "HI" ? "साइन इन करें" : "Sign In")
           }

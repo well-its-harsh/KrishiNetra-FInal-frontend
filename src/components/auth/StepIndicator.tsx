@@ -116,11 +116,22 @@ const StepIndicator = ({ currentStep, totalSteps }: StepIndicatorProps) => {
                     : 'text-[#D1B48C]'
                 }`}
               >
-                {step === 1 && "Account"}
-                {step === 2 && "Role"}
-                {step === 3 && "Verify"}
-                {step === 4 && "Documents"}
-                {step === 5 && "Complete"}
+                {totalSteps === 3 && (
+                  <>
+                    {step === 1 && "Account & Role"}
+                    {step === 2 && "Verify"}
+                    {step === 3 && "Complete"}
+                  </>
+                )}
+                {totalSteps === 5 && (
+                  <>
+                    {step === 1 && "Account"}
+                    {step === 2 && "Role"}
+                    {step === 3 && "Verify"}
+                    {step === 4 && "Documents"}
+                    {step === 5 && "Complete"}
+                  </>
+                )}
               </span>
             </div>
           );

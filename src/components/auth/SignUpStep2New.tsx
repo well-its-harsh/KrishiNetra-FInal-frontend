@@ -49,41 +49,53 @@ const SignUpStep2New = ({ formData, updateFormData, onNext, onPrev }: SignUpStep
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.role) {
-      setError(language === "HI" ? "कृपया एक भूमिका चुनें" : "Please select a role");
-      return;
+  e.preventDefault();
+
+  if (!formData.role) {
+    setError(language === "HI" ? "कृपया एक भूमिका चुनें" : "Please select a role");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+
+  try {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+    // 1️⃣ Update user role in backend
+    const res = await fetch(`${API_BASE_URL}/users/${formData.user_id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        role: formData.role,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Failed to update role");
     }
 
-    setLoading(true);
-    setError("");
-    
-    try {
-      if (formData.user_id) {
-        // Update user role via backend
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${API_BASE_URL}/users/${formData.user_id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            role: formData.role,
-          }),
-        });
+    // 2️⃣ Fetch updated profile to confirm saved role
+    const verifyRes = await fetch(`${API_BASE_URL}/users/${formData.user_id}`, {
+      credentials: "include",
+    });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Failed to update role');
-        }
-      }
-      onNext();
-    } catch (err: any) {
-      setError(language === "HI" ? "भूमिका सेट करने में त्रुटि" : err.message || "Error setting role");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const updated = await verifyRes.json();
+    const backendRole = updated.role; // "BUSINESS" / "FPO" / "CONSUMER"
+
+    // 3️⃣ Update local form state with TRUE backend role
+    updateFormData({ role: backendRole });
+
+    // 4️⃣ Now safe to move to next step
+    onNext();
+  } catch (err: any) {
+    setError(err.message || "Error setting role");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <motion.form

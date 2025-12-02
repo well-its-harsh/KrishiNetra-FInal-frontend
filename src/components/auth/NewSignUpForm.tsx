@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import StepIndicator from "./StepIndicator";
 import SignUpStep1New from "./SignUpStep1New";
-import SignUpStep2New from "./SignUpStep2New";
 import SignUpStep3New from "./SignUpStep3New";
-import SignUpStep4New from "./SignUpStep4New";
 import SignUpStep5New from "./SignUpStep5New";
 
 export interface SignUpData {
@@ -18,23 +15,22 @@ export interface SignUpData {
   // Step 2
   role: 'CONSUMER' | 'FPO' | 'BUSINESS' | null;
   
-  // Step 3
+  // Step 2 (continued) / Step 3
   aadhaar_verified: boolean;
   aadhaar_data: any;
   email_otp_verified: boolean;
   email_otp: string;
-  
-  // Step 4
-  documents: {
-    upload_ids: string[];
-  };
   
   // Internal
   user_id?: number;
   current_step: number;
 }
 
-const SignUpForm = () => {
+interface NewSignUpFormProps {
+  onStepChange?: (step: number, totalSteps: number) => void;
+}
+
+const SignUpForm = ({ onStepChange }: NewSignUpFormProps) => {
   const { language } = useLanguage();
   const [formData, setFormData] = useState<SignUpData>({
     full_name: '',
@@ -46,9 +42,6 @@ const SignUpForm = () => {
     aadhaar_data: null,
     email_otp_verified: false,
     email_otp: '',
-    documents: {
-      upload_ids: []
-    },
     current_step: 1
   });
 
@@ -56,28 +49,32 @@ const SignUpForm = () => {
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
+  const totalSteps = 3;
+
   const nextStep = () => {
-    if (formData.current_step < 5) {
-      setFormData(prev => ({ ...prev, current_step: prev.current_step + 1 }));
-    }
+    setFormData(prev => {
+      const next = Math.min(prev.current_step + 1, totalSteps);
+      const updated = { ...prev, current_step: next };
+      if (next !== prev.current_step) {
+        onStepChange?.(next, totalSteps);
+      }
+      return updated;
+    });
   };
 
   const prevStep = () => {
-    if (formData.current_step > 1) {
-      setFormData(prev => ({ ...prev, current_step: prev.current_step - 1 }));
-    }
+    setFormData(prev => {
+      const next = Math.max(prev.current_step - 1, 1);
+      const updated = { ...prev, current_step: next };
+      if (next !== prev.current_step) {
+        onStepChange?.(next, totalSteps);
+      }
+      return updated;
+    });
   };
-
-  const totalSteps = 5;
 
   return (
     <div className="w-full">
-      {/* Step Indicator */}
-      <StepIndicator 
-        currentStep={formData.current_step} 
-        totalSteps={totalSteps}
-      />
-
       {/* Step Content */}
       <div className="mt-8">
         <AnimatePresence mode="wait">
@@ -90,15 +87,6 @@ const SignUpForm = () => {
             />
           )}
           {formData.current_step === 2 && (
-            <SignUpStep2New
-              key="step2"
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
-          )}
-          {formData.current_step === 3 && (
             <SignUpStep3New
               key="step3"
               formData={formData}
@@ -107,16 +95,7 @@ const SignUpForm = () => {
               onPrev={prevStep}
             />
           )}
-          {formData.current_step === 4 && (
-            <SignUpStep4New
-              key="step4"
-              formData={formData}
-              updateFormData={updateFormData}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
-          )}
-          {formData.current_step === 5 && (
+          {formData.current_step === 3 && (
             <SignUpStep5New
               key="step5"
               formData={formData}

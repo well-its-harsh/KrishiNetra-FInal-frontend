@@ -19,42 +19,95 @@ import {
   ArrowDownRight,
   ArrowUpRight,
 } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { ProductCard } from "@/components/ProductCard";
+import { Navigation } from "@/components/navigation/Navigation";
+import { Button } from "@/components/ui/consumer/button";
+import { Badge } from "@/components/ui/consumer/badge";
+import { Card, CardContent } from "@/components/ui/consumer/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/consumer/tabs";
+import { Separator } from "@/components/ui/consumer/separator";
+import { ProductCard } from "@/components/consumer/ProductCard";
 import pearlMilletImage from "@/assets/product-pearl-millet.jpg";
 import ragiFlourImage from "@/assets/product-ragi-flour.jpg";
 import foxtailMilletImage from "@/assets/product-foxtail-millet.jpg";
+import { useQuery } from "@tanstack/react-query";
+import { checkProductAvailability, fetchProductDetail, ProductDetail as ApiProductDetail } from "@/lib/api";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const product = {
-    id: id || "1",
-    title: "Organic Pearl Millet (Bajra)",
-    brand: "FarmFresh Co-op",
-    price: 89,
-    mrp: 120,
-    unit: "per kg",
-    images: [pearlMilletImage, pearlMilletImage, pearlMilletImage],
-    rating: 4.5,
-    reviewCount: 234,
-    badges: ["FPO-Verified", "Lab-Verified", "FSSAI", "Organic"],
-    description:
-      "Premium organic pearl millet sourced from regenerative farms. Naturally rich in fiber, protein, and minerals, it is ideal for wholesome rotis, porridge, and artisanal recipes.",
-    nutritionalInfo: {
-      protein: "11g",
-      fiber: "8g",
-      iron: "3mg",
-      calcium: "42mg",
-    },
-  };
+  const numericId = id ? parseInt(id, 10) : NaN;
+
+  const {
+    data: apiProduct,
+    isLoading: isProductLoading,
+    isError: isProductError,
+  } = useQuery<ApiProductDetail>({
+    queryKey: ["product-detail", numericId],
+    queryFn: () => fetchProductDetail(numericId),
+    enabled: Number.isFinite(numericId),
+  });
+
+  const {
+    data: availability,
+    isLoading: isAvailabilityLoading,
+  } = useQuery<{ available: boolean; message: string}>({
+    queryKey: ["product-availability", numericId, quantity],
+    queryFn: () => checkProductAvailability(numericId, quantity),
+    enabled: Number.isFinite(numericId),
+  });
+
+  const product = (() => {
+    if (!apiProduct) {
+      return {
+        id: id || "1",
+        title: "Organic Pearl Millet (Bajra)",
+        brand: "FarmFresh Co-op",
+        price: 89,
+        mrp: 120,
+        unit: "per kg",
+        images: [pearlMilletImage, pearlMilletImage, pearlMilletImage],
+        rating: 4.5,
+        reviewCount: 0,
+        badges: ["FPO-Verified", "Lab-Verified", "FSSAI", "Organic"],
+        description:
+          "Premium organic pearl millet sourced from regenerative farms. Naturally rich in fiber, protein, and minerals, it is ideal for wholesome rotis, porridge, and artisanal recipes.",
+        nutritionalInfo: {
+          protein: "11g",
+          fiber: "8g",
+          iron: "3mg",
+          calcium: "42mg",
+        },
+      };
+    }
+
+    const priceNumber = typeof apiProduct.price === "string" ? parseFloat(apiProduct.price) : apiProduct.price;
+    const misc = apiProduct.miscellaneous_data || {};
+
+    return {
+      id: String(apiProduct.id),
+      title: apiProduct.name,
+      brand: misc.brand || "Millet producer",
+      price: priceNumber,
+      mrp: misc.mrp || priceNumber,
+      unit: misc.unit || "per kg",
+      images: (apiProduct.images && apiProduct.images.length > 0 ? apiProduct.images : [apiProduct.thumbnail].filter(Boolean)) as string[] || [pearlMilletImage],
+      rating: misc.rating || 4.5,
+      reviewCount: misc.reviewCount || 0,
+      badges: (misc.badges as string[]) || ["FPO-Verified"],
+      description:
+        apiProduct.description ||
+        "Premium organic millet sourced from trusted farmer networks. Naturally rich in fiber, protein, and minerals.",
+      nutritionalInfo:
+        (misc.nutritionalInfo as Record<string, string>) || {
+          protein: "11g",
+          fiber: "8g",
+          iron: "3mg",
+          calcium: "42mg",
+        },
+    };
+  })();
 
   const summaryInfo = [
     { label: "Verified by", value: "FPO Council", icon: ShieldCheck, tone: "bg-[#E4F5E6] text-[#2E7D32]" },
@@ -140,6 +193,28 @@ const ProductDetail = () => {
     }, 450);
     return () => clearInterval(timer);
   }, []);
+
+  if (isProductLoading) {
+    return (
+      <div className="min-h-screen bg-[#F7F1E5]">
+        <Navigation />
+        <main className="container px-4 py-10 md:px-6 lg:px-10">
+          <p className="text-sm text-[#7A6A58]">Loading product details...</p>
+        </main>
+      </div>
+    );
+  }
+
+  if (isProductError || !apiProduct && !id) {
+    return (
+      <div className="min-h-screen bg-[#F7F1E5]">
+        <Navigation />
+        <main className="container px-4 py-10 md:px-6 lg:px-10">
+          <p className="text-sm text-[#C6533D]">Unable to load this product. Please try again from the marketplace.</p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F1E5]">
@@ -253,7 +328,17 @@ const ProductDetail = () => {
                     </div>
                     <div>
                       <p className="text-xs uppercase tracking-[0.25em] text-[#8C7B67]">Stock status</p>
-                      <p className="text-base font-semibold text-[#2E7D32]">Ready · 120 kg remaining</p>
+                      <p
+                        className={`text-base font-semibold ${
+                          availability?.available ? "text-[#2E7D32]" : "text-[#C6533D]"
+                        }`}
+                      >
+                        {isAvailabilityLoading
+                          ? "Checking availability..."
+                          : availability?.available
+                          ? "Available"
+                          : availability?.message || "Currently unavailable"}
+                      </p>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-3">

@@ -23,7 +23,7 @@ export const ProtectedRoute = ({
     );
   }
 
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/signin" replace />;
 
   if (allowedRoles && !allowedRoles.includes(user.role.toLowerCase())) {
     return <Navigate to="/unauthorized" replace />;

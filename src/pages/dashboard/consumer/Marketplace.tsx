@@ -11,91 +11,46 @@ import { Slider } from "../../../components/ui/consumer/slider";
 import { Badge } from "@/components/ui/consumer/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
-// Sample product data
+import { useQuery } from "@tanstack/react-query";
+import { fetchProducts, ProductListItem } from "@/lib/api";
 import pearlMilletImage from "@/assets/product-pearl-millet.jpg";
-import ragiFlourImage from "@/assets/product-ragi-flour.jpg";
-import foxtailMilletImage from "@/assets/product-foxtail-millet.jpg";
 
-console.log('Marketplace component is rendering');
+console.log("Marketplace component is rendering");
 
-const sampleProducts = [
-  {
-    id: "1",
-    title: "Organic Pearl Millet (Bajra)",
-    brand: "FarmFresh Co-op",
-    price: 89,
+const mapProductToCardProps = (product: ProductListItem) => {
+  const priceNumber = typeof product.price === "string" ? parseFloat(product.price) : product.price;
+
+  return {
+    id: String(product.id),
+    title: product.name,
+    brand: "Millet producer",
+    price: priceNumber,
     unit: "per kg",
-    image: pearlMilletImage,
+    image: product.thumbnail || pearlMilletImage,
     rating: 4.5,
-    reviewCount: 234,
-    badges: ["FPO-Verified", "Organic", "FSSAI"],
+    reviewCount: 0,
+    badges: [],
     deliveryEstimate: "2-3 days",
-  },
-  {
-    id: "2",
-    title: "Finger Millet Flour (Ragi Atta)",
-    brand: "Millet Basket",
-    price: 120,
-    unit: "per kg",
-    image: ragiFlourImage,
-    rating: 4.7,
-    reviewCount: 456,
-    badges: ["Lab-Verified", "Organic", "FSSAI"],
-    deliveryEstimate: "1-2 days",
-  },
-  {
-    id: "3",
-    title: "Foxtail Millet Premium",
-    brand: "Village Harvest",
-    price: 95,
-    unit: "per kg",
-    image: foxtailMilletImage,
-    rating: 4.6,
-    reviewCount: 189,
-    badges: ["FPO-Verified", "FSSAI"],
-    deliveryEstimate: "2-3 days",
-  },
-  {
-    id: "4",
-    title: "Organic Pearl Millet (Bajra)",
-    brand: "FarmFresh Co-op",
-    price: 89,
-    unit: "per kg",
-    image: pearlMilletImage,
-    rating: 4.5,
-    reviewCount: 234,
-    badges: ["FPO-Verified", "Organic"],
-    deliveryEstimate: "2-3 days",
-  },
-  {
-    id: "5",
-    title: "Finger Millet Flour (Ragi Atta)",
-    brand: "Millet Basket",
-    price: 120,
-    unit: "per kg",
-    image: ragiFlourImage,
-    rating: 4.7,
-    reviewCount: 456,
-    badges: ["Lab-Verified", "FSSAI"],
-    deliveryEstimate: "1-2 days",
-  },
-  {
-    id: "6",
-    title: "Foxtail Millet Premium",
-    brand: "Village Harvest",
-    price: 95,
-    unit: "per kg",
-    image: foxtailMilletImage,
-    rating: 4.6,
-    reviewCount: 189,
-    badges: ["FPO-Verified", "Organic"],
-    deliveryEstimate: "2-3 days",
-  },
-];
+  };
+};
 
 const Marketplace = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchTerm, setSearchTerm] = useState("");
   const { user, isAuthenticated, loading } = useAuth();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["products", { search: searchTerm.trim() || undefined }],
+    queryFn: () =>
+      fetchProducts(
+        searchTerm.trim()
+          ? {
+              search: searchTerm.trim(),
+            }
+          : undefined,
+      ),
+  });
+
+  const products = data?.products ?? [];
       // Redirect if not authenticated or wrong role
   if (loading) {
     return <div>Loading...</div>; // Or a loading spinner
@@ -142,6 +97,8 @@ const Marketplace = () => {
                       type="search"
                       placeholder="Search millets, recipes, health goals, or sellers..."
                       className="rounded-full border-[#E6DFD4] bg-[#FFF8EC] pl-4 pr-4 text-sm"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2 text-xs">
@@ -230,7 +187,7 @@ const Marketplace = () => {
                         {cat}
                       </button>
                     ))}
-                    <span className="ml-2 text-[11px] text-[#B09782]">({sampleProducts.length} items)</span>
+                    <span className="ml-2 text-[11px] text-[#B09782]">({products.length} items)</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     <span className="text-[#7A6A58]">Sort by:</span>
@@ -267,9 +224,16 @@ const Marketplace = () => {
 
               {/* Product Grid */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {sampleProducts.map((product) => (
-                  <ProductCard key={product.id} {...product} />
-                ))}
+                {isLoading && (
+                  <div className="col-span-full text-sm text-muted-foreground">Loading products...</div>
+                )}
+                {isError && !isLoading && (
+                  <div className="col-span-full text-sm text-red-500">Unable to load products. Please try again.</div>
+                )}
+                {!isLoading && !isError &&
+                  products.map((product) => (
+                    <ProductCard key={product.id} {...mapProductToCardProps(product)} />
+                  ))}
               </div>
             </div>
           </div>

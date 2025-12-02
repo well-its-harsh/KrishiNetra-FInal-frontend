@@ -6,7 +6,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
 type UserRole = "admin" | "consumer" | "seller" | "fpo";
 
 interface User {
-  id: string | number;
+  id: number;
   email: string;
   name?: string;
   role: UserRole;
@@ -18,19 +18,21 @@ interface AuthContextType {
   user: User | null;
   setUser: (u: User | null) => void;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
 }
+
 export const mapBackendRole = (role: string): UserRole => {
-    const r = role.trim().toUpperCase();
-    if (r === "CONSUMER") return "consumer";
-    if (r === "FPO") return "fpo";
-    if (r === "BUSINESS") return "seller"; // backend BUSINESS = seller dashboard
-    if (r === "ADMIN") return "admin";
-    throw new Error(`Unknown backend role: ${role}`);
-  };
+  const r = role.trim().toUpperCase();
+  if (r === "CONSUMER") return "consumer";
+  if (r === "FPO") return "fpo";
+  if (r === "BUSINESS") return "seller";
+  if (r === "ADMIN") return "admin";
+  throw new Error(`Unknown backend role: ${role}`);
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -39,10 +41,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  /** 🔥 BACKEND ROLE → FRONTEND ROLE */
-  
-
-  /** 🔥 Normalize backend structure to UI structure */
   const normalizeUser = (raw: any): User => ({
     id: raw.id,
     email: raw.email,
@@ -52,34 +50,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     verification_status: raw.is_active ? "verified" : "pending",
   });
 
-  /** 🔥 Auto-login on page refresh */
+  /** 🔥 Restore session from cookies on refresh */
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    const verify = async () => {
+    const restore = async () => {
       try {
-        const res = await fetch(`${API_BASE}/auth/verify`, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await fetch(`${API_BASE}/profiles/me`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Session expired");
-
-        const data = await res.json(); // backend must now send { user: {...} }
-        setUser(normalizeUser(data.user));
+        if (!res.ok) throw new Error("Not logged in");
+        const profile = await res.json();
+        setUser(normalizeUser(profile));
       } catch {
-        localStorage.removeItem("authToken");
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    verify();
+    restore();
   }, []);
 
   /** 🔥 Login */
@@ -88,58 +76,69 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
+      const loginRes = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!res.ok) throw new Error("Invalid credentials");
+      if (!loginRes.ok) throw new Error("Invalid credentials");
+      const loginData = await loginRes.json();
+      const userId = loginData.user_id;
 
-      const data = await res.json(); // must include { token, user }
-      localStorage.setItem("authToken", data.token);
+      // Fetch updated role from DB
+      const profileRes = await fetch(`${API_BASE}/users/${userId}`, {
+        credentials: "include",
+      });
+      const profile = await profileRes.json();
+      const normalized = normalizeUser(profile);
 
-      const normalized = normalizeUser(data.user);
       setUser(normalized);
 
-      // Redirect immediately
-      const role = normalized.role;
-      if (role === "consumer") navigate("/dashboard/consumer", { replace: true });
-      else if (role === "seller" || role === "fpo") navigate("/dashboard/seller", { replace: true });
-      else if (role === "admin") navigate("/dashboard/admin", { replace: true });
-      else navigate("/", { replace: true });
+      // Route by role
+      const r = normalized.role;
+      if (r === "consumer") navigate("/dashboard/consumer", { replace: true });
+      else if (r === "seller") navigate("/dashboard/seller", { replace: true });
+      else if (r === "fpo") navigate("/dashboard/fpo", { replace: true });
+      else if (r === "admin") navigate("/dashboard/admin", { replace: true });
 
-    } catch (err) {
-      console.error(err);
-      setError("Login failed. Please check your email/password.");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   /** 🔥 Logout */
-  const logout = () => {
-    localStorage.removeItem("authToken");
+  const logout = async () => {
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
     setUser(null);
-    navigate("/auth", { replace: true });
+    navigate("/signin", { replace: true });
   };
 
-  const value: AuthContextType = {
-    user,
-    setUser, // required for Step-5 signup autofill
-    login,
-    logout,
-    isAuthenticated: !!user,
-    loading,
-    error,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        login,
+        logout,
+        isAuthenticated: !!user,
+        loading,
+        error,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 };
