@@ -7,7 +7,8 @@
  * 3. Update error handling for real API responses
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+//const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+import { API_BASE_URL } from "@/config/api";
 
 // Mock delay to simulate API calls
 const mockDelay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
@@ -101,25 +102,21 @@ export const loginUser = async (data: {
   email: string;
   password: string;
 }) => {
-  await mockDelay(700);
-  
-  // TODO: Replace with actual API call
-  // const response = await fetch(`${API_BASE_URL}/auth/login`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(data)
-  // });
-  // return await response.json();
-  
-  // Mock response
-  return {
-    token: `mock_token_${Date.now()}`,
-    user_id: 'user_123',
-    role: 'consumer',
-    email_verified: true,
-    verification_status: 'pending'
-  };
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",     // ⬅ REQUIRED so HttpOnly cookies are saved
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const msg = await response.text();
+    throw new Error(msg || "Login failed");
+  }
+
+  return response.json(); // backend returns user info, NOT token
 };
+
 
 /**
  * POST /auth/forgot-password

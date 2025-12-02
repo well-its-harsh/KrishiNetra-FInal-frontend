@@ -1,5 +1,5 @@
 // src/components/auth/ProtectedRoute.tsx
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
@@ -14,7 +14,9 @@ export const ProtectedRoute = ({
   requireVerified = false,
 }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
+  // Wait for AuthContext to restore session
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center text-lg font-semibold">
@@ -23,12 +25,23 @@ export const ProtectedRoute = ({
     );
   }
 
-  if (!user) return <Navigate to="/signin" replace />;
+  // Not logged in -> send to login + remember previous URL
+  if (!user) {
+    return (
+      <Navigate
+        to="/signin"
+        replace
+        state={{ from: { pathname: location.pathname } }}
+      />
+    );
+  }
 
-  if (allowedRoles && !allowedRoles.includes(user.role.toLowerCase())) {
+  // Role check
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
+  // Verification check
   if (requireVerified && user.verification_status !== "verified") {
     return <Navigate to="/verification-pending" replace />;
   }

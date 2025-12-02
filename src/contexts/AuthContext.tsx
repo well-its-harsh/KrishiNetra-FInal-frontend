@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
+import { useNavigate, useLocation } from "react-router-dom";
+import { API_BASE } from "@/config/api";
 
 type UserRole = "admin" | "consumer" | "seller" | "fpo";
 
@@ -36,10 +35,16 @@ export const mapBackendRole = (role: string): UserRole => {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [user, setUser] = useState<User | null>(() => {
+    const cached = localStorage.getItem("user");
+    return cached ? JSON.parse(cached) : null;
+  });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   const normalizeUser = (raw: any): User => ({
     id: raw.id,
@@ -50,18 +55,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     verification_status: raw.is_active ? "verified" : "pending",
   });
 
-  /** 🔥 Restore session from cookies on refresh */
+  /** 🔥 Restore session from backend + sync with localStorage */
   useEffect(() => {
     const restore = async () => {
       try {
         const res = await fetch(`${API_BASE}/profiles/me`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Not logged in");
+        if (!res.ok) throw new Error();
         const profile = await res.json();
-        setUser(normalizeUser(profile));
+        const normalized = normalizeUser(profile);
+        setUser(normalized);
+        localStorage.setItem("user", JSON.stringify(normalized));
       } catch {
         setUser(null);
+        localStorage.removeItem("user");
       } finally {
         setLoading(false);
       }
@@ -85,23 +93,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!loginRes.ok) throw new Error("Invalid credentials");
       const loginData = await loginRes.json();
-      const userId = loginData.user_id;
 
-      // Fetch updated role from DB
-      const profileRes = await fetch(`${API_BASE}/users/${userId}`, {
+      const profileRes = await fetch(`${API_BASE}/users/${loginData.user_id}`, {
         credentials: "include",
       });
       const profile = await profileRes.json();
       const normalized = normalizeUser(profile);
 
       setUser(normalized);
+      localStorage.setItem("user", JSON.stringify(normalized));
 
-      // Route by role
-      const r = normalized.role;
-      if (r === "consumer") navigate("/dashboard/consumer", { replace: true });
-      else if (r === "seller") navigate("/dashboard/seller", { replace: true });
-      else if (r === "fpo") navigate("/dashboard/fpo", { replace: true });
-      else if (r === "admin") navigate("/dashboard/admin", { replace: true });
+      const from = (location.state as any)?.from?.pathname;
+      if (from) return navigate(from, { replace: true });
+
+      if (normalized.role === "consumer") navigate("/dashboard/consumer", { replace: true });
+      else if (normalized.role === "seller") navigate("/dashboard/seller", { replace: true });
+      else if (normalized.role === "fpo") navigate("/dashboard/fpo", { replace: true });
+      else navigate("/dashboard/admin", { replace: true });
 
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -117,8 +125,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       credentials: "include",
     });
     setUser(null);
+    localStorage.removeItem("user");
     navigate("/signin", { replace: true });
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center text-lg font-semibold">
+        Loading session...
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider
