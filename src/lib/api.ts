@@ -351,6 +351,56 @@ export const fetchProducts = async (params?: ProductQueryParams): Promise<Produc
   return response.json();
 };
 
+export type ProductCreatePayload = {
+  name: string;
+  description?: string | null;
+  price: number;
+  quantity: number;
+  images?: string[] | null;
+  thumbnail?: string | null;
+  miscellaneous_data?: Record<string, any> | null;
+};
+
+export type ProductResponse = {
+  message: string;
+  product: ProductDetail;
+};
+
+export const createProduct = async (payload: ProductCreatePayload): Promise<ProductResponse> => {
+  const response = await fetch(`${API_BASE_URL}/products/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to create product');
+  }
+
+  return response.json();
+};
+
+export const fetchMyProducts = async (
+  skip: number = 0,
+  limit: number = 100,
+): Promise<ProductListResponse> => {
+  const url = new URL(`${API_BASE_URL}/products/my/products`);
+  url.searchParams.set('skip', String(skip));
+  url.searchParams.set('limit', String(limit));
+
+  const response = await fetch(url.toString(), {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch my products');
+  }
+  return response.json();
+};
+
 export const searchProducts = async (q: string, skip: number = 0, limit: number = 100): Promise<ProductListResponse> => {
   const url = new URL(`${API_BASE_URL}/products/search`);
   url.searchParams.set('q', q);
@@ -384,6 +434,233 @@ export const checkProductAvailability = async (
   });
   if (!response.ok) {
     throw new Error('Failed to check product availability');
+  }
+  return response.json();
+};
+// ==================== CART & ORDERS ====================
+
+export type CartProduct = {
+  id: number;
+  name: string;
+  price: number | string;
+  thumbnail?: string | null;
+  quantity: number;
+};
+
+export type CartItemDetail = {
+  id: number;
+  user_id: number;
+  product_id: number;
+  quantity: number;
+  created_at: string;
+  product: CartProduct;
+};
+
+export type CartSummary = {
+  items: CartItemDetail[];
+  total_items: number;
+  subtotal: number | string;
+  total: number | string;
+};
+
+export type CartResponse = {
+  message: string;
+  cart: CartSummary;
+};
+
+export type CartItemCreatePayload = {
+  product_id: number;
+  quantity: number;
+};
+
+export type CartItemUpdatePayload = {
+  quantity: number;
+};
+
+export type CartItemResponse = {
+  message: string;
+  cart_item: CartItemDetail;
+};
+
+export const fetchCart = async (): Promise<CartResponse> => {
+  const response = await fetch(`${API_BASE_URL}/cart/`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch cart');
+  }
+  return response.json();
+};
+
+export const addToCartApi = async (payload: CartItemCreatePayload): Promise<CartItemResponse> => {
+  const response = await fetch(`${API_BASE_URL}/cart/items`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to add to cart');
+  }
+  return response.json();
+};
+
+export const updateCartItemApi = async (
+  cartItemId: number,
+  payload: CartItemUpdatePayload,
+): Promise<CartItemResponse> => {
+  const response = await fetch(`${API_BASE_URL}/cart/items/${cartItemId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to update cart item');
+  }
+  return response.json();
+};
+
+export const removeCartItemApi = async (cartItemId: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/cart/items/${cartItemId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to remove cart item');
+  }
+};
+
+export const clearCartApi = async (): Promise<{ message: string; items_removed: number }> => {
+  const response = await fetch(`${API_BASE_URL}/cart/clear`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to clear cart');
+  }
+  return response.json();
+};
+
+export const fetchCartCount = async (): Promise<{ count: number }> => {
+  const response = await fetch(`${API_BASE_URL}/cart/count`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch cart count');
+  }
+  return response.json();
+};
+
+export const validateCartApi = async (): Promise<{ valid: boolean; message: string; errors?: string[] }> => {
+  const response = await fetch(`${API_BASE_URL}/cart/validate`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to validate cart');
+  }
+  return response.json();
+};
+
+export type OrderItemDetail = {
+  id: number;
+  order_id: number;
+  product_id: number;
+  seller_id: number;
+  product_name: string;
+  product_price: number | string;
+  quantity: number;
+  subtotal: number | string;
+};
+
+export type OrderDetail = {
+  id: number;
+  user_id: number;
+  status: string;
+  subtotal: number | string;
+  tax: number | string;
+  shipping_fee: number | string;
+  total: number | string;
+  shipping_address: string;
+  shipping_phone: string;
+  payment_method?: string | null;
+  payment_transaction_id?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  paid_at?: string | null;
+  shipped_at?: string | null;
+  delivered_at?: string | null;
+  order_items: OrderItemDetail[];
+};
+
+export type OrderListResponse = {
+  orders: OrderDetail[];
+  total: number;
+  skip: number;
+  limit: number;
+};
+
+export type OrderCreatePayload = {
+  shipping_address: string;
+  shipping_phone: string;
+  payment_method?: string | null;
+  notes?: string | null;
+};
+
+export type OrderResponse = {
+  message: string;
+  order: OrderDetail;
+};
+
+export const checkoutOrder = async (payload: OrderCreatePayload): Promise<OrderResponse> => {
+  const response = await fetch(`${API_BASE_URL}/orders/checkout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to checkout');
+  }
+  return response.json();
+};
+
+export const fetchMyOrders = async (
+  skip: number = 0,
+  limit: number = 100,
+): Promise<OrderListResponse> => {
+  const url = new URL(`${API_BASE_URL}/orders/my-orders`);
+  url.searchParams.set('skip', String(skip));
+  url.searchParams.set('limit', String(limit));
+  const response = await fetch(url.toString(), {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch orders');
+  }
+  return response.json();
+};
+
+export const cancelOrderApi = async (orderId: number): Promise<OrderResponse> => {
+  const response = await fetch(`${API_BASE_URL}/orders/${orderId}/cancel`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to cancel order');
   }
   return response.json();
 };

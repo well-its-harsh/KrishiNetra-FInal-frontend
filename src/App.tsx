@@ -10,10 +10,16 @@ import Signup from "./pages/Signup";
 import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 import Marketplace from "./pages/dashboard/consumer/Marketplace";
+import CheckoutPage from "./pages/dashboard/consumer/CheckoutPage";
+import OrdersPage from "./pages/dashboard/consumer/OrdersPage";
+import ProductDetail from "./pages/dashboard/consumer/ProductDetail";
 import SellerMarketplace from "./pages/dashboard/seller/SellerMarketplace";
 import CreateAuctionPage from "./pages/dashboard/seller/CreateAuctionPage";
 import MyLotsPage from "./pages/dashboard/seller/MyLotsPage";
 import AuctionDetailPage from "./pages/dashboard/seller/AuctionDetailPage";
+import CreateProductPage from "./pages/dashboard/seller/CreateProductPage";
+import MyProductsPage from "./pages/dashboard/seller/MyProductsPage";
+import ProductInsightsPage from "./pages/dashboard/seller/ProductInsightsPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 console.log('App component is rendering');
@@ -40,6 +46,33 @@ const App = () => (
                 <Marketplace />
               </ProtectedRoute>
             } 
+          />
+
+          <Route
+            path="/product/:id"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
@@ -75,6 +108,34 @@ const App = () => (
             element={
               <ProtectedRoute allowedRoles={['seller', 'fpo']}>
                 <AuctionDetailPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Seller product routes */}
+          <Route
+            path="/products/create"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <CreateProductPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/products/my-products"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <MyProductsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/products/insights"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <ProductInsightsPage />
               </ProtectedRoute>
             }
           />

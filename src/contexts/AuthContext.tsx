@@ -27,10 +27,12 @@ export const mapBackendRole = (role: string): UserRole => {
   const r = role.trim().toUpperCase();
   if (r === "CONSUMER") return "consumer";
   if (r === "FPO") return "fpo";
-  if (r === "BUSINESS") return "seller";
+  if (r === "BUSINESS" || r === "SELLER") return "seller";
   if (r === "ADMIN") return "admin";
-  throw new Error(`Unknown backend role: ${role}`);
+  console.warn("Unknown backend role:", r);
+  return "consumer"; // safe fallback to avoid app crash
 };
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -47,36 +49,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   const normalizeUser = (raw: any): User => ({
-    id: raw.id,
-    email: raw.email,
-    name: raw.name,
-    role: mapBackendRole(raw.role),
-    email_verified: raw.is_authenticated,
-    verification_status: raw.is_active ? "verified" : "pending",
-  });
+  id: raw.id,
+  email: raw.email,
+  name: raw.name,
+  role: mapBackendRole(raw.role),
+
+  // Correct mappings
+  email_verified: raw.is_authenticated,          // whether user verified email/login
+  verification_status: raw.is_active
+    ? "verified"
+    : raw.is_authenticated
+    ? "pending"
+    : "rejected",
+});
+
 
   /** 🔥 Restore session from backend + sync with localStorage */
   useEffect(() => {
-    const restore = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/profiles/me`, {
-          credentials: "include",
-        });
-        if (!res.ok) throw new Error();
-        const profile = await res.json();
-        const normalized = normalizeUser(profile);
-        setUser(normalized);
-        localStorage.setItem("user", JSON.stringify(normalized));
-      } catch {
-        setUser(null);
-        localStorage.removeItem("user");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const restore = async () => {
+    const id = localStorage.getItem("user_id");
+    if (!id) {
+      setLoading(false);
+      return;
+    }
 
-    restore();
-  }, []);
+    try {
+      const res = await fetch(`${API_BASE}/users/${id}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error();
+      const raw = await res.json();
+      const normalized = normalizeUser(raw);
+      setUser(normalized);
+      localStorage.setItem("user", JSON.stringify(normalized));
+    } catch {
+      setUser(null);
+      localStorage.removeItem("user");
+      localStorage.removeItem("user_id");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  restore();
+}, []);
+
 
   /** 🔥 Login */
   const login = async (email: string, password: string) => {
@@ -126,6 +143,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("user_id");
     navigate("/signin", { replace: true });
   };
 

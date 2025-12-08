@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/consumer/button";
 import { Badge } from "@/components/ui/consumer/badge";
 import { Card, CardContent } from "@/components/ui/consumer/card";
 import { Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addToCartApi } from "@/lib/api";
 
 interface ProductCardProps {
   id: string;
@@ -36,6 +38,15 @@ export const ProductCard = ({
   badges,
   deliveryEstimate,
 }: ProductCardProps) => {
+  const queryClient = useQueryClient();
+
+  const addMutation = useMutation({
+    mutationFn: () => addToCartApi({ product_id: Number(id), quantity: 1 }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-card-hover">
       <CardContent className="p-0">
@@ -93,7 +104,14 @@ export const ProductCard = ({
               <p className="text-lg font-bold">₹{price}</p>
               <p className="text-xs text-muted-foreground">{unit}</p>
             </div>
-            <Button size="sm" className="gap-2">
+            <Button
+              size="sm"
+              className="gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                addMutation.mutate();
+              }}
+            >
               <ShoppingCart className="h-4 w-4" />
               Add
             </Button>

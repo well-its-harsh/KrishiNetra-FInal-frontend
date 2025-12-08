@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ShoppingCart,
   Heart,
@@ -29,11 +29,13 @@ import { ProductCard } from "@/components/consumer/ProductCard";
 import pearlMilletImage from "@/assets/product-pearl-millet.jpg";
 import ragiFlourImage from "@/assets/product-ragi-flour.jpg";
 import foxtailMilletImage from "@/assets/product-foxtail-millet.jpg";
-import { useQuery } from "@tanstack/react-query";
-import { checkProductAvailability, fetchProductDetail, ProductDetail as ApiProductDetail } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addToCartApi, checkProductAvailability, fetchProductDetail, ProductDetail as ApiProductDetail } from "@/lib/api";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -179,6 +181,13 @@ const ProductDetail = () => {
 
   const discountPercent = Math.round(((product.mrp - product.price) / product.mrp) * 100);
   const [visibleTraceSteps, setVisibleTraceSteps] = useState(1);
+
+  const addToCartMutation = useMutation({
+    mutationFn: () => addToCartApi({ product_id: numericId, quantity }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
 
   useEffect(() => {
     setVisibleTraceSteps(1);
@@ -353,13 +362,21 @@ const ProductDetail = () => {
                   </div>
                 </div>
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                  <Button className="btn-ripple flex-1 rounded-full bg-[#2E7D32] py-6 text-lg font-semibold text-white shadow-[0_25px_55px_rgba(46,125,50,0.35)] hover:bg-[#256428]">
+                  <Button
+                    className="btn-ripple flex-1 rounded-full bg-[#2E7D32] py-6 text-lg font-semibold text-white shadow-[0_25px_55px_rgba(46,125,50,0.35)] hover:bg-[#256428]"
+                    disabled={addToCartMutation.isPending}
+                    onClick={() => addToCartMutation.mutate()}
+                  >
                     <ShoppingCart className="mr-2 h-5 w-5" />
-                    Add to cart
+                    {addToCartMutation.isPending ? "Adding..." : "Add to cart"}
                   </Button>
                   <Button
                     variant="outline"
                     className="btn-ripple flex-1 rounded-full border-[#E6DFD4] bg-white text-[#2E7D32] hover:bg-[#E4F5E6]"
+                    onClick={async () => {
+                      await addToCartMutation.mutateAsync();
+                      navigate("/checkout");
+                    }}
                   >
                     Buy now
                   </Button>
