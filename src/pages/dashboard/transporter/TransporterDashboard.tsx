@@ -56,12 +56,12 @@ const TransporterDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F1E5]">
+    <div className="min-h-screen bg-[#F5F7FA]">
       <Navigation />
-      <main className="container px-4 py-8 md:px-6 lg:px-10 space-y-6">
-        <div className="rounded-3xl border border-[#E6DFD4] bg-white/95 p-6 shadow-[0_24px_60px_rgba(95,79,54,0.12)]">
-          <h1 className="text-2xl font-semibold text-[#1F2D3D] mb-2">Transporter Dashboard</h1>
-          <p className="text-sm text-[#7A6A58]">
+      <main className="container mx-auto px-4 py-8 md:px-6 lg:px-10 space-y-6">
+        <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-[#0D1B2A] via-[#12345A] to-[#1F2D3D] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.55)] text-white">
+          <h1 className="text-2xl font-semibold mb-1">Transporter Dashboard</h1>
+          <p className="text-sm text-slate-100/85">
             View and accept logistics jobs created for shipments, then coordinate pickup and delivery.
           </p>
         </div>

@@ -91,10 +91,10 @@ const SellerMarketplace = () => {
   }, [allAuctions]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#F5F7FA]">
       <Navigation />
 
-      <main className="container px-4 py-6 md:px-6 lg:px-8">
+      <main className="container mx-auto px-4 py-6 md:px-6 lg:px-8 space-y-6">
         {/* Sidebar trigger */}
         <Sheet>
           <SheetTrigger asChild>
@@ -190,9 +190,30 @@ const SellerMarketplace = () => {
         <div className="flex flex-col gap-6">
           {/* Header & Tools Section (Replacing Hero & Awareness Strip) */}
           <section className="space-y-6">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold text-[#1F2D3D]">Auction Marketplace</h1>
-              <p className="text-[#7A6A58]">Bid or create lots — connecting farmers, startups & bulk buyers</p>
+            <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-[#0D1B2A] via-[#12345A] to-[#1F2D3D] px-5 py-6 text-white shadow-[0_22px_50px_rgba(15,23,42,0.45)]">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="space-y-1">
+                  <p className="text-[11px] tracking-[0.18em] uppercase text-slate-200/90">Seller console</p>
+                  <h1 className="text-2xl md:text-3xl font-semibold">Auction Marketplace</h1>
+                  <p className="text-xs md:text-sm text-slate-100/80 max-w-xl">
+                    List millet lots, track live bidding and manage institutional demand in one trusted place.
+                  </p>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2 md:mt-0">
+                  <Button className="rounded-full bg-[#4CAF50] px-4 py-2 text-xs md:text-sm font-semibold text-white hover:bg-[#3D8B41]">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create auction lot
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="rounded-full border-amber-300 bg-amber-50/10 px-4 py-2 text-xs md:text-sm font-semibold text-amber-200 hover:bg-amber-50/20"
+                    onClick={() => navigate("/dashboard/seller/contracts")}
+                  >
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    View contracts
+                  </Button>
+                </div>
+              </div>
             </div>
 
             {/* Seller Tools Row */}

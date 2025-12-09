@@ -136,19 +136,19 @@ const InstitutionDashboard = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#F7F1E5]">
+    <div className="min-h-screen bg-[#F5F7FA]">
       <Navigation />
-      <main className="container px-4 py-8 md:px-6 lg:px-10 space-y-6">
-        <div className="rounded-3xl border border-[#E6DFD4] bg-white/95 p-6 shadow-[0_24px_60px_rgba(95,79,54,0.12)]">
-          <h1 className="text-2xl font-semibold text-[#1F2D3D] mb-2">Institution Dashboard</h1>
-          <p className="text-sm text-[#7A6A58]">
-            View bulk millet offers from verified sellers and track your B2B contracts.
+      <main className="container mx-auto px-4 py-8 md:px-6 lg:px-10 space-y-6">
+        <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-[#0D1B2A] via-[#12345A] to-[#1F2D3D] p-6 shadow-[0_24px_60px_rgba(15,23,42,0.55)] text-white">
+          <h1 className="text-2xl font-semibold mb-1">Institution Dashboard</h1>
+          <p className="text-xs md:text-sm text-slate-100/85 max-w-2xl">
+            View bulk millet offers from verified sellers, fund escrow securely and track your B2B contracts and shipments.
           </p>
         </div>
 
         {/* Wallet summary */}
         <section>
-          <Card className="rounded-3xl border border-[#E6DFD4] bg-white/95">
+          <Card className="rounded-3xl border border-slate-200 bg-white/95 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
             <CardContent className="p-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-xs font-semibold text-[#7A6A58] uppercase tracking-wide">Wallet</p>

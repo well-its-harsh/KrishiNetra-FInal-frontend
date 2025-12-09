@@ -695,10 +695,10 @@ const AuctionDetailPage = () => {
   // =======================
   if (isLoading || !lot) {
     return (
-      <div className="min-h-screen bg-[#F7F1E5]">
+      <div className="min-h-screen bg-[#F5F7FA]">
         <Navigation />
-        <main className="container px-4 py-10">
-          <p className="text-sm">Loading auction details…</p>
+        <main className="container mx-auto px-4 py-8 md:px-6 lg:px-10">
+          <p className="text-sm text-slate-600">Loading auction details…</p>
         </main>
       </div>
     );
@@ -706,9 +706,9 @@ const AuctionDetailPage = () => {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-[#F7F1E5]">
+      <div className="min-h-screen bg-[#F5F7FA]">
         <Navigation />
-        <main className="container px-4 py-10">
+        <main className="container mx-auto px-4 py-8 md:px-6 lg:px-10">
           <p className="text-sm text-red-600">Failed to load auction. Try again later.</p>
         </main>
       </div>
@@ -719,11 +719,11 @@ const AuctionDetailPage = () => {
   // 🎯 MAIN UI
   // =======================
   return (
-    <div className="min-h-screen bg-[#F7F1E5]">
+    <div className="min-h-screen bg-[#F5F7FA]">
       <Navigation />
-      <main className="container px-4 py-10">
+      <main className="container mx-auto px-4 py-8 md:px-6 lg:px-10 space-y-6">
         {/* IMAGE + BID SECTION */}
-        <section className="grid gap-10 lg:grid-cols-2 bg-white rounded-3xl p-6 shadow-xl border">
+        <section className="grid grid-cols-1 xl:grid-cols-[2fr,1.2fr] gap-6 rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-[#F9FBFF] to-[#F3F6FA] p-4 md:p-6 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
           <div className="space-y-5">
             <div className="relative overflow-hidden rounded-2xl border shadow">
               <img src={images[selectedImage]} alt="" className="w-full object-cover" />
@@ -749,19 +749,20 @@ const AuctionDetailPage = () => {
 
           {/* BID COLUMN */}
           <div className="space-y-7">
-            <h1 className="text-3xl font-semibold">{lot.name}</h1>
+            <h1 className="text-3xl font-semibold text-[#0D1B2A]">{lot.name}</h1>
 
-            <div className="rounded-2xl border p-6 bg-white space-y-4">
+            <div className="rounded-2xl border border-slate-200 bg-white/95 p-6 space-y-4 shadow-sm">
               <div className="flex justify-between items-center gap-4">
                 <div>
-                  <p className="text-xs text-[#6a5e52] uppercase">Current Highest Bid</p>
-                  <span className="text-4xl font-bold text-[#2E7D32]">
+                  <p className="text-[11px] tracking-[0.18em] text-slate-500 uppercase">Current Highest Bid</p>
+                  <span className="text-4xl font-semibold text-[#4CAF50]">
                     ₹{lot.currentBid.toLocaleString()}
                   </span>
-                  <p className="text-xs text-gray-500 mt-1">for {lot.quantity}</p>
+                  <p className="text-xs text-slate-500 mt-1">for {lot.quantity}</p>
                 </div>
-                <div className="bg-[#FFF8EC] px-4 py-2 rounded-full border text-[#B7741D] font-medium flex items-center">
-                  ⏳ {timeLeft || "Calculating…"}
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#0D1B2A]/10 bg-[#0D1B2A] px-4 py-2 text-xs font-medium text-white shadow-sm">
+                  <span className="inline-flex h-2 w-2 rounded-full bg-[#4CAF50]" />
+                  <span>⏳ {timeLeft || "Calculating…"}</span>
                 </div>
               </div>
 
@@ -792,14 +793,7 @@ const AuctionDetailPage = () => {
                     Once you are sure bidding has ended, finalize the auction to lock in the winning bid
                     and trigger downstream flows (payment, logistics, ledger).
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => finalizeAuctionMutation.mutate()}
-                    disabled={finalizeAuctionMutation.isPending}
-                    className="inline-flex items-center rounded-full bg-[#111827] px-4 py-1.5 text-xs font-semibold text-white hover:bg-black disabled:opacity-60"
-                  >
-                    {finalizeAuctionMutation.isPending ? "Finalizing…" : "Finalize auction now"}
-                  </button>
+                  
                   {finalizeAuctionMutation.isError && (
                     <p className="text-[11px] text-red-600">
                       {(finalizeAuctionMutation.error as Error)?.message || "Failed to finalize auction"}
