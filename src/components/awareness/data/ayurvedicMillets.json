@@ -1,0 +1,775 @@
+{
+    "database_title": "Ayurvedic Millets Database: The Ancient Grains for Modern Wellness",
+    "millets": [
+        {
+            "millet_id": "M001",
+            "millet_name": "Foxtail",
+            "type": "Minor Millet",
+            "vernacular_names": {
+                "Hindi": "Kangni",
+                "Marathi": "Kang",
+                "Tamil": "Tenai",
+                "Telugu": "Korra",
+                "Kannada": "Navane",
+                "Gujarati": "Kangal"
+            },
+            "botanical_name": "Setaria italica",
+            "nutritional_profile_per_100g": {
+                "calories": 351,
+                "protein": 12.3,
+                "fiber": 8.0,
+                "iron": 2.8,
+                "magnesium": 81,
+                "calcium": 31,
+                "glycemic_index": 54
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating (when dry)",
+                    "Pitta": "Balancing",
+                    "Kapha": "Balancing"
+                },
+                "guna": "Laghu (light), Ruksha (dry)",
+                "virya": "Cooling",
+                "vipaka": "Katu (Pungent)",
+                "ama_reduction_score": 8,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Diabetes",
+                "Obesity",
+                "High Cholesterol",
+                "Constipation",
+                "PCOS",
+                "Heart health"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": false,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Foxtail Millet reduces Kapha accumulation, stabilizes Meda Dhatu (fat tissue), and supports blood sugar regulation due to its high fiber and low GI (acting as a Srotas Shodhana). Its cooling Virya balances Pitta, making it good for inflammatory conditions.",
+            "contraindications": {
+                "who_should_avoid": "Individuals with severe Vata imbalance or joint pain (due to its Ruksha/dry nature).",
+                "how_much_is_safe": "1/2 cup (cooked) per day; should be presoaked and cooked with ghee/oil (Snigdha) to balance Vata.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Foxtail Millet Kichadi with Turmeric and Moong Dal",
+                    "dosha_focus": "Tri-doshic (especially Kapha-Pitta)",
+                    "season": "Varsha (Monsoon) and Shishir (Winter)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M002",
+            "millet_name": "Little",
+            "type": "Minor Millet",
+            "vernacular_names": {
+                "Hindi": "Kutki",
+                "Marathi": "Sava",
+                "Tamil": "Samai",
+                "Telugu": "Samalu",
+                "Kannada": "Same",
+                "Gujarati": "Gajro"
+            },
+            "botanical_name": "Panicum sumatrense",
+            "nutritional_profile_per_100g": {
+                "calories": 341,
+                "protein": 7.7,
+                "fiber": 7.6,
+                "iron": 9.3,
+                "magnesium": 120,
+                "calcium": 28,
+                "glycemic_index": 52
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Slightly Aggravating",
+                    "Pitta": "Balancing",
+                    "Kapha": "Balancing"
+                },
+                "guna": "Laghu (light), Ruksha (dry)",
+                "virya": "Cooling",
+                "vipaka": "Katu (Pungent)",
+                "ama_reduction_score": 9,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Diabetes",
+                "Obesity",
+                "Insomnia / Low Sleep",
+                "Low immunity",
+                "Constipation",
+                "PCOS"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": true,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Little Millet is excellent for removing Ama due to its potent Ruksha Guna and Laghu (lightness), which stimulates Mandagni (low digestive fire). It is deeply nourishing (Rasayana) yet cleansing, supporting the healthy formation of Rasa Dhatu (plasma/lymphatic tissue) and clearing Srotas (channels).",
+            "contraindications": {
+                "who_should_avoid": "Vata individuals, especially those with severe dryness; must be consumed with Vata-pacifying ingredients.",
+                "how_much_is_safe": "1/2 cup (cooked) per day; soak overnight and cook well to enhance digestibility.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Kutki Upma with Seasonal Vegetables and Ghee",
+                    "dosha_focus": "Kapha-Balancing",
+                    "season": "Grishma (Summer) and Sharat (Autumn)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M003",
+            "millet_name": "Barnyard",
+            "type": "Minor Millet",
+            "vernacular_names": {
+                "Hindi": "Sanwa",
+                "Marathi": "Bhagar",
+                "Tamil": "Kuthiraivali",
+                "Telugu": "Udalu",
+                "Kannada": "Oodalu",
+                "Gujarati": "Samo"
+            },
+            "botanical_name": "Echinochloa frumentacea",
+            "nutritional_profile_per_100g": {
+                "calories": 307,
+                "protein": 6.2,
+                "fiber": 9.8,
+                "iron": 5.0,
+                "magnesium": 82,
+                "calcium": 20,
+                "glycemic_index": 50
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating",
+                    "Pitta": "Balancing",
+                    "Kapha": "Highly Balancing"
+                },
+                "guna": "Laghu (light), Ruksha (dry), Sheeta (cold)",
+                "virya": "Cooling",
+                "vipaka": "Madhura (Sweet)",
+                "ama_reduction_score": 8,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Diabetes",
+                "Obesity",
+                "Liver disorders",
+                "Constipation",
+                "Kidney stones"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": false,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Barnyard millet is the best for 'Langhana' (lightening therapy). It scrapes away excess Kapha and fat (Meda) without aggravating Pitta due to its cooling nature. It acts as a diuretic (Mutrala), helping clean the Vrikka (kidneys) and urinary tract.",
+            "contraindications": {
+                "who_should_avoid": "Vata types with constipation or dryness issues, unless well cooked with ghee.",
+                "how_much_is_safe": "1/2 cup cooked daily. Often restricted to fasting days (Ekadashi) in India due to its purity and lightness.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Sanwa Khichdi with Sendha Namak (Rock Salt)",
+                    "dosha_focus": "Pitta-Kapha Balancing",
+                    "season": "All seasons (especially fasting days)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M004",
+            "millet_name": "Kodo",
+            "type": "Minor Millet",
+            "vernacular_names": {
+                "Hindi": "Kodra",
+                "Marathi": "Kodra",
+                "Tamil": "Varagu",
+                "Telugu": "Arikelu",
+                "Kannada": "Arka",
+                "Gujarati": "Kodri"
+            },
+            "botanical_name": "Paspalum scrobiculatum",
+            "nutritional_profile_per_100g": {
+                "calories": 309,
+                "protein": 8.3,
+                "fiber": 9.0,
+                "iron": 0.5,
+                "magnesium": 115,
+                "calcium": 27,
+                "glycemic_index": 51
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating",
+                    "Pitta": "Balancing",
+                    "Kapha": "Highly Balancing"
+                },
+                "guna": "Laghu (light), Ruksha (dry)",
+                "virya": "Cooling",
+                "vipaka": "Katu (Pungent)",
+                "ama_reduction_score": 9,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Diabetes",
+                "High Cholesterol",
+                "Obesity",
+                "Piles/Hemorrhoids",
+                "Skin disorders"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": false,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Kodo is 'Lekhaniya' (scraping) and 'Vishaghna' (anti-toxic). It is valued for purifying the blood (Rakta Shodhana) and reducing Kapha-related skin issues. Its high fiber regulates blood sugar better than most grains.",
+            "contraindications": {
+                "who_should_avoid": "Pure Vata constitutions; can cause constipation if not taken with plenty of water and ghee.",
+                "how_much_is_safe": "1/2 cup cooked. Note: Kodo must be processed correctly to remove potential mycotoxins (uncommon in commercial varieties but possible in raw harvest).",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Varagu Rice with Buttermilk Curry (Mor Kuzhambu)",
+                    "dosha_focus": "Pitta Balancing",
+                    "season": "Grishma (Summer)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M005",
+            "millet_name": "Pearl",
+            "type": "Major Millet",
+            "vernacular_names": {
+                "Hindi": "Bajra",
+                "Marathi": "Bajri",
+                "Tamil": "Kambu",
+                "Telugu": "Sajja",
+                "Kannada": "Sajje",
+                "Gujarati": "Bajri"
+            },
+            "botanical_name": "Pennisetum glaucum",
+            "nutritional_profile_per_100g": {
+                "calories": 361,
+                "protein": 11.6,
+                "fiber": 1.2,
+                "iron": 8.0,
+                "magnesium": 110,
+                "calcium": 42,
+                "glycemic_index": 55
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating (Drying)",
+                    "Pitta": "Neutral/Mildly Aggravating",
+                    "Kapha": "Highly Balancing"
+                },
+                "guna": "Guru (heavy), Ruksha (dry)",
+                "virya": "Heating",
+                "vipaka": "Katu (Pungent)",
+                "ama_reduction_score": 6,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": false,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": false
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Obesity",
+                "Low immunity",
+                "Stress / Anxiety (as a warming food)",
+                "Constipation (if consumed with Ghee)",
+                "Thyroid (Supports metabolism)"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": false,
+                "controlling_cravings": true,
+                "better_gut_microbiome": false
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Bajra's Ushna Virya (Heating potency) and Ruksha Guna intensely clear Kapha and Ama. It stimulates Agni (digestive fire), improving deep tissue metabolism, especially Meda Dhatu (fat tissue), making it excellent for weight loss and warming the body in cold weather.",
+            "contraindications": {
+                "who_should_avoid": "Pitta individuals during summer; those with hyperacidity or inflammatory conditions.",
+                "how_much_is_safe": "1/2 cup (cooked) per day, primarily in winter; must be combined with generous Snigdha (oily) substances like sesame oil or ghee to pacify Vata.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Bajra Roti with Ghee and Jaggery",
+                    "dosha_focus": "Vata-Kapha Balancing",
+                    "season": "Hemanta (Late Autumn) and Shishir (Winter)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M006",
+            "millet_name": "Finger",
+            "type": "Major Millet",
+            "vernacular_names": {
+                "Hindi": "Ragi",
+                "Marathi": "Nachani",
+                "Tamil": "Kezhvaragu",
+                "Telugu": "Ragulu",
+                "Kannada": "Ragi",
+                "Gujarati": "Nagli"
+            },
+            "botanical_name": "Eleusine coracana",
+            "nutritional_profile_per_100g": {
+                "calories": 328,
+                "protein": 7.3,
+                "fiber": 3.6,
+                "iron": 3.9,
+                "magnesium": 137,
+                "calcium": 344,
+                "glycemic_index": 68
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating",
+                    "Pitta": "Balancing",
+                    "Kapha": "Balancing"
+                },
+                "guna": "Guru (heavy), Ruksha (dry)",
+                "virya": "Cooling",
+                "vipaka": "Katu (Pungent)",
+                "ama_reduction_score": 7,
+                "ayurvedic_benefits": {
+                    "improves_digestion": false,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": false,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Diabetes",
+                "Insomnia / Low Sleep",
+                "High Cholesterol",
+                "Constipation (if fermented)",
+                "PCOS"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": false,
+                "weight_management": true,
+                "improved_sleep_cycle": true,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Ragi is unique due to its high natural calcium, which strengthens Asthi Dhatu (bone tissue). Its cooling Virya and Madhura Vipaka (sweet post-digestive effect) are gently pacifying for Pitta. It is a good source of fiber (acting as a Langhana/lightening agent), beneficial for Kapha, but its inherent heaviness (Guru) can be hard on weak Agni.",
+            "contraindications": {
+                "who_should_avoid": "Those with severely compromised Agni (low digestive power).",
+                "how_much_is_safe": "1/2 cup (cooked) per day; often consumed as fermented preparation (Ambali) for easier digestion and increased nutrient absorption.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Ragi Ambali (Fermented Porridge)",
+                    "dosha_focus": "Pitta-Balancing",
+                    "season": "Grishma (Summer) and Sharat (Autumn)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M007",
+            "millet_name": "Proso",
+            "type": "Minor Millet",
+            "vernacular_names": {
+                "Hindi": "Cheena",
+                "Marathi": "Vari",
+                "Tamil": "Pani Varagu",
+                "Telugu": "Varigalu",
+                "Kannada": "Baragu",
+                "Gujarati": "Cheno"
+            },
+            "botanical_name": "Panicum miliaceum",
+            "nutritional_profile_per_100g": {
+                "calories": 378,
+                "protein": 11.0,
+                "fiber": 8.5,
+                "iron": 3.0,
+                "magnesium": 114,
+                "calcium": 14,
+                "glycemic_index": 71
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating",
+                    "Pitta": "Balancing",
+                    "Kapha": "Balancing"
+                },
+                "guna": "Guru (heavy), Ruksha (dry)",
+                "virya": "Cooling",
+                "vipaka": "Madhura (Sweet)",
+                "ama_reduction_score": 6,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Nervous system weakness",
+                "Pellagra",
+                "Skin diseases",
+                "High Cholestrol"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": false,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "Proso is 'Brumhana' (strengthening) and helps build tissue while still being 'Ruksha'. It is beneficial for strengthening the nerves (Majja Dhatu) due to high niacin content. Its cooling nature helps with Pitta-related skin issues.",
+            "contraindications": {
+                "who_should_avoid": "Vata individuals should limit intake or cook with plenty of moisture and oil.",
+                "how_much_is_safe": "1/2 cup cooked daily.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Proso Millet Upma with Curry Leaves",
+                    "dosha_focus": "Pitta Balancing",
+                    "season": "Grishma (Summer)"
+                }
+            ]
+        },
+        {
+            "millet_id": "M008",
+            "millet_name": "Browntop",
+            "type": "Minor Millet",
+            "vernacular_names": {
+                "Hindi": "Hari Kangni",
+                "Marathi": "-",
+                "Tamil": "Pala Pul",
+                "Telugu": "Andu Korra",
+                "Kannada": "Korale",
+                "Gujarati": "-"
+            },
+            "botanical_name": "Urochloa ramosa",
+            "nutritional_profile_per_100g": {
+                "calories": 338,
+                "protein": 11.5,
+                "fiber": 12.5,
+                "iron": 7.7,
+                "magnesium": 110,
+                "calcium": 28,
+                "glycemic_index": 50
+            },
+            "ayurvedic_profile": {
+                "dosha_effects": {
+                    "Vata": "Aggravating",
+                    "Pitta": "Balancing",
+                    "Kapha": "Highly Balancing"
+                },
+                "guna": "Laghu (light), Ruksha (dry), Sara (motile)",
+                "virya": "Cooling",
+                "vipaka": "Katu (Pungent)",
+                "ama_reduction_score": 10,
+                "ayurvedic_benefits": {
+                    "improves_digestion": true,
+                    "reduces_inflammation": true,
+                    "balances_blood_sugar": true,
+                    "supports_metabolism": true,
+                    "enhances_gut_health": true
+                }
+            },
+            "diseases_or_conditions_it_helps": [
+                "Severe Constipation",
+                "Diabetes",
+                "Obesity",
+                "Colon Cancer prevention",
+                "Detox"
+            ],
+            "lifestyle_benefits": {
+                "better_energy": true,
+                "weight_management": true,
+                "improved_sleep_cycle": false,
+                "controlling_cravings": true,
+                "better_gut_microbiome": true
+            },
+            "ayurvedic_reasoning_why_it_helps_disease": "With the highest fiber content among millets, Browntop is the ultimate 'Srotas Shodhana' (channel cleaner). It scrapes the intestines, removing old Ama and toxins, and regulates the Anulomana (downward movement) of Vata. It is extremely effective for weight loss and blood sugar control.",
+            "contraindications": {
+                "who_should_avoid": "Those with very weak digestion (Mandagni); the high fiber can cause bloating. Must be soaked for 6-8 hours minimum.",
+                "how_much_is_safe": "1/3 cup cooked daily; start slow.",
+                "scientific_references_needed": true
+            },
+            "recommended_ayurvedic_recipes": [
+                {
+                    "recipe_name": "Browntop Millet Pulao with Coriander",
+                    "dosha_focus": "Kapha Balancing",
+                    "season": "Varsha (Monsoon)"
+                }
+            ]
+        }
+    ],
+    "ayurvedic_principles_related_to_millets": {
+        "section_id": "AP001",
+        "principles": [
+            {
+                "principle_name": "Tridosha Balancing",
+                "explanation": "Millets are generally *Kapha-Balancing* due to their Ruksha (dry) and Laghu (light) Gunas. However, their Ruksha/Laghu nature tends to increase *Vata. Many millets have a **Cooling Virya* which pacifies *Pitta*. Therefore, millets must be consumed with Vata-pacifying agents like Ghee/oil, and warm spices, especially by Vata individuals.",
+                "image_prompt": "Conceptual illustration of the three doshas (Vata, Pitta, Kapha) being balanced by a bowl of millets and Ayurvedic herbs."
+            },
+            {
+                "principle_name": "Agni Improvement",
+                "explanation": "Millets, being Laghu (light) and having a Katu Vipaka (pungent post-digestive taste), can stimulate a sluggish Agni (digestive fire), aiding digestion and metabolism. Millets like Pearl (Bajra) have Ushna Virya (heating) which directly kindles Agni, making them ideal for individuals with Mandagni (low digestive fire).",
+                "image_prompt": "A symbolic illustration of a glowing fire (Agni) being stoked by millet grains."
+            },
+            {
+                "principle_name": "Ama Reduction",
+                "explanation": "Due to their Ruksha (dry) quality and high fiber content (acting as a scraping agent or 'Lekhana'), most millets are excellent for reducing Ama (toxins/undigested residue) that accumulates in the GI tract. Little Millet (Kutki) and Foxtail are particularly effective for this.",
+                "image_prompt": "An abstract visual representation of clearing or scraping away impurities (Ama) from a channel (Srotas) using millet grains."
+            },
+            {
+                "principle_name": "Srotas Cleaning (Channels)",
+                "explanation": "Millets' 'Lekhana' action scrapes excess Kapha and fat from the Srotas (microcirculatory channels), particularly the Medovaha Srotas (channels of fat metabolism), improving circulation and nutrient delivery, and facilitating detoxification.",
+                "image_prompt": "Diagram showing clear, open channels (Srotas) in the body, with a focus on the digestive tract."
+            },
+            {
+                "principle_name": "Effect on Dhatus (Rasa, Rakta, Meda)",
+                "explanation": "Millets' Lekhana effect directly impacts *Meda Dhatu* (fat tissue) by preventing its excessive accumulation and stabilizing its metabolism. They also support healthy *Rasa Dhatu* (plasma/lymphatic tissue) formation by aiding in proper digestion, and some (like Finger Millet) fortify *Asthi Dhatu* (bone tissue) due to high mineral content.",
+                "image_prompt": "Illustration of the Dhatus (Rasa, Rakta, Mamsa, Meda, Asthi, Majja, Shukra) in a conceptual wheel with millet at the center."
+            },
+            {
+                "principle_name": "How Millets Improve Metabolism According to Ayurveda",
+                "explanation": "Millets improve metabolism by stimulating Agni, clearing the Srotas of Ama and excess Meda (fat), and thus allowing the Dhatus to be properly nourished. This process of clearing (Shodhana) and nourishing (Brumhana) is the core of effective metabolic function (Dhatu Agni).",
+                "image_prompt": "Infographic style image illustrating a smooth, healthy metabolic cycle with millet consumption."
+            }
+        ]
+    },
+    "database_section_for_diseases": {
+        "section_id": "DS001",
+        "diseases": [
+            {
+                "disease_id": "D001",
+                "disease_name": "Diabetes (Madhumeha)",
+                "ayurvedic_cause": "Kapha Vriddhi (excess) leading to impairment of Meda and Mutra Dhatu (fat and urinary tissues); Ama accumulation; Marga Avarodha (channel obstruction).",
+                "symptoms": "Frequent urination, excessive thirst, fatigue, weakness, weight loss/gain, tingling sensation in extremities.",
+                "millets_recommended": [
+                    {
+                        "millet_name": "Foxtail",
+                        "GI": 54
+                    },
+                    {
+                        "millet_name": "Little",
+                        "GI": 52
+                    },
+                    {
+                        "millet_name": "Kodo",
+                        "GI": 51
+                    }
+                ],
+                "why_these_millets_help": "These millets are Laghu (light), Ruksha (dry), and possess a high Lekhana (scraping) effect, which directly counteracts the excess Kapha and Meda Dhatu impairment. Their low GI supports stable Raktavaha Srotas (blood channels).",
+                "lifestyle_recommendations": "Daily walking (Vyayama), eating the largest meal at lunch (Agni peak), avoiding daytime sleep (Diwaswapna), practicing Pranayama."
+            },
+            {
+                "disease_id": "D002",
+                "disease_name": "Obesity (Sthoulya)",
+                "ayurvedic_cause": "Major Kapha Vriddhi, leading to excessive accumulation and derangement of Meda Dhatu (fat tissue), often linked to Mandagni (low digestive fire) and lack of Vyayama (exercise).",
+                "symptoms": "Excess body weight, shortness of breath, excessive hunger/thirst, fatigue, weak stamina.",
+                "millets_recommended": [
+                    {
+                        "millet_name": "Pearl",
+                        "GI": 55
+                    },
+                    {
+                        "millet_name": "Barnyard",
+                        "GI": 50
+                    },
+                    {
+                        "millet_name": "Proso",
+                        "GI": 71
+                    }
+                ],
+                "why_these_millets_help": "Pearl Millet's Ushna Virya (Heating) and Ruksha Guna powerfully kindle Agni and burn excess Kapha and Ama/Meda. Barnyard is very low GI, providing the Langhana (lightening) effect. Proso offers satiety while helping stimulate metabolism.",
+                "lifestyle_recommendations": "Regular intense exercise (especially Kapha time: 6-10 AM/PM), using triphala or hot water/ginger tea to stimulate Agni, light and dry foods."
+            },
+            {
+                "disease_id": "D003",
+                "disease_name": "Insomnia / Low Sleep (Anidra)",
+                "ayurvedic_cause": "Vata Vriddhi (excess) in the Manovaha Srotas (mind channels), causing restlessness, anxiety, and a highly active mind; sometimes Pitta aggravation (sleeplessness in the middle of the night).",
+                "symptoms": "Difficulty falling asleep, frequent waking, waking up unrefreshed, anxiety before sleep, fatigue.",
+                "millets_recommended": [
+                    {
+                        "millet_name": "Finger",
+                        "GI": 68
+                    },
+                    {
+                        "millet_name": "Little",
+                        "GI": 52
+                    }
+                ],
+                "why_these_millets_help": "Finger Millet (Ragi) is cooling and mildly Guru (heavy), helping to ground Vata-Pitta. Little Millet, when cooked with Vata-pacifying ingredients (ghee, milk, grounding spices), provides deep nourishment (Brumhana) to the nervous system (Majja Dhatu), which is key for sound sleep.",
+                "lifestyle_recommendations": "Abhyanga (oil massage) before bed, warm milk with nutmeg, grounding routines (e.g., meditation), avoiding screens late at night."
+            }
+        ]
+    },
+    "user_personalization": {
+        "section_id": "UP001",
+        "dosha_based_millet_recommendations": [
+            {
+                "dosha": "Vata",
+                "recommendation": "Use millets sparingly due to their Ruksha (dry) and Laghu (light) qualities which increase Vata. Must be soaked, cooked thoroughly (like porridge), and balanced with Snigdha (oily) substances like Ghee, Sesame Oil, or milk. Prefer millets with a slightly Guru (heavy) quality.",
+                "preferred_millets": [
+                    "Finger (Ragi)",
+                    "Proso (soaked)"
+                ],
+                "recipes_example": [
+                    "Ragi Porridge with Ghee and Ashwagandha"
+                ]
+            },
+            {
+                "dosha": "Pitta",
+                "recommendation": "Pitta can tolerate most millets. Focus on millets with a Sheeta Virya (Cooling potency) and Madhura Vipaka (sweet post-digestive taste) to soothe inflammation and heat. Avoid excessive use of Pearl Millet (Bajra) in summer.",
+                "preferred_millets": [
+                    "Foxtail (Kangni)",
+                    "Little (Kutki)",
+                    "Finger (Ragi)"
+                ],
+                "recipes_example": [
+                    "Foxtail Millet Salad with Cooling Herbs (Cilantro, Mint)"
+                ]
+            },
+            {
+                "dosha": "Kapha",
+                "recommendation": "Kapha benefits most from all millets as they are naturally Lekhana (scraping), Ruksha (dry), and Laghu (light), directly opposing Kapha's Guru (heavy) and Snigdha (oily) qualities. They help clear Ama and Meda (fat).",
+                "preferred_millets": [
+                    "Pearl (Bajra)",
+                    "Barnyard (Sanwa)",
+                    "Kodo (Kodra)"
+                ],
+                "recipes_example": [
+                    "Bajra Roti with Warm Spices (Ginger, Turmeric) and minimal oil"
+                ]
+            }
+        ],
+        "goal_based_recommendations": [
+            {
+                "goal": "For Diabetes",
+                "millet_focus": "Low GI, High Fiber, Kapha/Meda reducing",
+                "millets": [
+                    "Little (GI 52)",
+                    "Foxtail (GI 54)",
+                    "Barnyard (GI 50)"
+                ],
+                "explanation": "Low GI millets prevent rapid blood sugar spikes, acting as a gentle Langhana (lightening) and Lekhana (scraping) agent on Meda Dhatu."
+            },
+            {
+                "goal": "For Weight Loss",
+                "millet_focus": "Kapha/Meda reducing, Ushna (Heating), Ruksha (Dry)",
+                "millets": [
+                    "Pearl (Bajra)",
+                    "Kodo",
+                    "Barnyard"
+                ],
+                "explanation": "These millets kindle Agni and possess the Ruksha Guna required to clear Marga Avarodha (channel obstruction) caused by Kapha and Meda accumulation."
+            },
+            {
+                "goal": "For Better Sleep",
+                "millet_focus": "Grounding, Vata-Pitta calming, Majja Dhatu nourishing",
+                "millets": [
+                    "Finger (Ragi)",
+                    "Little"
+                ],
+                "explanation": "Ragi's cooling and relatively heavy nature pacifies Vata-Pitta. They must be prepared with Vata-pacifying ingredients (ghee, spices) and consumed 2-3 hours before bed."
+            },
+            {
+                "goal": "For Muscle Gain",
+                "millet_focus": "Protein, High Mineral, Bala (Strength) increasing",
+                "millets": [
+                    "Pearl (Bajra)",
+                    "Proso"
+                ],
+                "explanation": "Pearl and Proso millets have higher protein content and their Ushna Virya (Heating) supports healthy Agni, leading to better conversion of nutrients into Mamsa Dhatu (muscle tissue)."
+            },
+            {
+                "goal": "For Gut Health",
+                "millet_focus": "High Fiber, Prebiotic, Srotas Cleansing",
+                "millets": [
+                    "Foxtail",
+                    "Little",
+                    "Barnyard"
+                ],
+                "explanation": "The high, insoluble fiber acts as a prebiotic, nourishing the gut flora. Their Lekhana quality clears Ama from the digestive Srotas, enhancing absorption and reducing intestinal inflammation."
+            }
+        ]
+    },
+    "new_ideas_for_database_power": {
+        "section_id": "NI001",
+        "ideas": [
+            {
+                "idea_name": "Seasonal Suitability (Rutu-Charya)",
+                "details": "Add a 'seasonal_suitability' field (e.g., Shishir, Grishma, Varsha, Sharad, Hemanta) for each millet, linking it to the seasonal requirements of the Doshas. Example: Pearl Millet (Heating) is best for Hemanta/Shishir (Winter). Finger Millet (Cooling) is great for Grishma/Sharad (Summer/Autumn)."
+            },
+            {
+                "idea_name": "Prakriti-Specific Diet Plans",
+                "details": "Create 7-day example meal plans for each Prakriti (Vata, Pitta, Kapha) that incorporate millets, ensuring the preparatory methods (Snigdha/Ruksha, Ushna/Sheeta) are strictly adhered to."
+            },
+            {
+                "idea_name": "Millet-based Ayurvedic Detox Plan",
+                "details": "Design a 7-day Langhana (lightening) and Shodhana (cleansing) plan using millets like Little and Barnyard Kichadi to stimulate Agni and clear Ama, alongside specific herbs and lifestyle practices."
+            },
+            {
+                "idea_name": "Millet + Herb Combination Matrix",
+                "details": "For each millet, suggest a key herb to combine it with to enhance its therapeutic effect. E.g., Little Millet + Ashwagandha (for sleep/grounding), Foxtail + Triphala (for deeper Ama removal), Pearl + Trikatu (for better Agni)."
+            },
+            {
+                "idea_name": "Emotional Health Benefits",
+                "details": "Add a field for 'manasa_prabhava' (effect on mind) for each millet. E.g., Ragi (grounding) for anxiety, Pearl (warming) for lethargy."
+            },
+            {
+                "idea_name": "Millet Processing Methods & Ayurvedic Impact",
+                "details": "Detailed section on how processing affects Doshas. *Sprouting* (reduces Guru, increases Laghu/Vata). *Roasting* (enhances Ushna/heating, good for Kapha). *Fermenting* (increases Sour taste, easier to digest for low Agni, can increase Pitta)."
+            },
+            {
+                "idea_name": "Millet Storage Guidelines",
+                "details": "Practical advice on Ayurvedic storage. E.g., Millets should be kept dry and away from heat (to prevent Ama formation/rancidity), and presoaking is essential."
+            }
+        ]
+    }
+}

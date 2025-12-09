@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/consumer/input";
 import { Slider } from "../../../components/ui/consumer/slider";
 import { Badge } from "@/components/ui/consumer/badge";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts, ProductListItem } from "@/lib/api";
 import pearlMilletImage from "@/assets/product-pearl-millet.jpg";
@@ -35,6 +35,7 @@ const mapProductToCardProps = (product: ProductListItem) => {
 };
 
 const Marketplace = () => {
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const { user, isAuthenticated, loading } = useAuth();
@@ -44,14 +45,14 @@ const Marketplace = () => {
       fetchProducts(
         searchTerm.trim()
           ? {
-              search: searchTerm.trim(),
-            }
+            search: searchTerm.trim(),
+          }
           : undefined,
       ),
   });
 
   const products = data?.products ?? [];
-      // Redirect if not authenticated or wrong role
+  // Redirect if not authenticated or wrong role
   if (loading) {
     return <div>Loading...</div>; // Or a loading spinner
   }
@@ -119,33 +120,40 @@ const Marketplace = () => {
                     label: "AI millet guide",
                     description: "Ask any millet or health question in simple language.",
                     icon: Sparkles,
+                    path: "/consumer/ai-guide"
                   },
                   {
                     label: "Recipe hub",
                     description: "Trending millet recipes for home kitchens.",
                     icon: ChefHat,
+                    path: "/dashboard/consumer/recipes"
                   },
                   {
                     label: "Highly rated picks",
                     description: "Curated by rating, freshness, and repeat orders.",
                     icon: Star,
+                    // No specific page cloned for this, keeping it as placeholder or filter action potentially
+                    path: null
                   },
                   {
-                    label: "Doctor recommended",
+                    label: "Ayurvedic Guide", // Renamed from "Doctor recommended" to match cloned feature
                     description: "Millet mixes aligned to wellness goals.",
                     icon: HeartPulse,
+                    path: "/consumer/ayurveda"
                   },
                   {
                     label: "SHG & FPO stories",
                     description: "Farmer and SHG success journeys from the field.",
                     icon: Users,
+                    path: "/consumer/stories"
                   },
                 ].map((block) => {
                   const Icon = block.icon;
                   return (
                     <div
                       key={block.label}
-                      className="min-w-[220px] max-w-[240px] rounded-2xl border border-[#E6DFD4] bg-[#FFF8EC]/90 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(95,79,54,0.18)]"
+                      onClick={() => block.path && navigate(block.path)}
+                      className={`min-w-[220px] max-w-[240px] rounded-2xl border border-[#E6DFD4] bg-[#FFF8EC]/90 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(95,79,54,0.18)] ${block.path ? 'cursor-pointer' : ''}`}
                     >
                       <div className="mb-2 flex items-center gap-2">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2E7D32]/10 text-[#2E7D32]">
@@ -178,11 +186,10 @@ const Marketplace = () => {
                     {["All", "Grains", "Flours", "Ready-to-cook", "Snacks"].map((cat, index) => (
                       <button
                         key={cat}
-                        className={`btn-ripple rounded-full border px-3 py-1 ${
-                          index === 0
-                            ? "border-[#2E7D32] bg-[#2E7D32]/10 text-[#2E7D32]"
-                            : "border-[#E6DFD4] bg-[#FFF8EC] text-[#7A6A58] hover:bg-white"
-                        }`}
+                        className={`btn-ripple rounded-full border px-3 py-1 ${index === 0
+                          ? "border-[#2E7D32] bg-[#2E7D32]/10 text-[#2E7D32]"
+                          : "border-[#E6DFD4] bg-[#FFF8EC] text-[#7A6A58] hover:bg-white"
+                          }`}
                       >
                         {cat}
                       </button>
@@ -194,11 +201,10 @@ const Marketplace = () => {
                     {["Recommended", "Price · Low to high", "Best rated", "Bestseller"].map((sort, index) => (
                       <button
                         key={sort}
-                        className={`btn-ripple rounded-full border px-3 py-1 ${
-                          index === 0
-                            ? "border-[#2E7D32] bg-[#2E7D32]/10 text-[#2E7D32]"
-                            : "border-[#E6DFD4] bg-white text-[#7A6A58] hover:bg-[#FFF8EC]"
-                        }`}
+                        className={`btn-ripple rounded-full border px-3 py-1 ${index === 0
+                          ? "border-[#2E7D32] bg-[#2E7D32]/10 text-[#2E7D32]"
+                          : "border-[#E6DFD4] bg-white text-[#7A6A58] hover:bg-[#FFF8EC]"
+                          }`}
                       >
                         {sort}
                       </button>
