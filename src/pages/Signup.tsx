@@ -5,11 +5,13 @@ import SignUpForm from "@/components/auth/NewSignUpForm";
 import signupImage from "@/assets/signup.jpg";
 import { Eye } from "lucide-react";
 import StepIndicator from "@/components/auth/StepIndicator";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const { language } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
   const [totalSteps, setTotalSteps] = useState(3);
+  const navigate = useNavigate();
 
   const handleStepChange = (step: number, total: number) => {
     setCurrentStep(step);
@@ -86,9 +88,13 @@ const Signup = () => {
                             </p>
                             <p className={`mt-2 text-xs text-white/70 ${language === "HI" ? "hindi" : ""}`}>
                               {language === "HI" ? "पहले से खाता है?" : "Already have an account?"}{" "}
-                              <span className="underline font-semibold">
+                              <button
+                                type="button"
+                                onClick={() => navigate("/signin")}
+                                className="underline font-semibold"
+                              >
                                 {language === "HI" ? "साइन इन करें" : "Sign in"}
-                              </span>
+                              </button>
                             </p>
                           </>
                         )}

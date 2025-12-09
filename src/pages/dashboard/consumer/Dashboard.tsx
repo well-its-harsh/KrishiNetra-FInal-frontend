@@ -262,6 +262,8 @@ const Sparkline = ({ points, color, id }: { points: number[]; color: string; id:
 const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentStage, setPaymentStage] = useState<"details" | "processing" | "success">("details");
 
   useEffect(() => {
     const timer = window.setTimeout(() => setIsLoadingProducts(false), 700);
@@ -619,6 +621,31 @@ const Dashboard = () => {
 
               <Card className="rounded-[24px] border border-[#E7DCCA] bg-white/95 shadow-[0_20px_50px_rgba(93,74,51,0.12)]">
                 <CardHeader>
+                  <CardTitle className="text-xl text-[#1F2D3D]">Payments (Dev Simulated)</CardTitle>
+                  <CardDescription className="text-[#7A6A58]">
+                    Open a fake checkout window to simulate a successful payment without any real gateway.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm text-[#5B4D3B]">
+                  <p>
+                    Use this during demos when you want to show a payment success flow without wiring an actual
+                    gateway. It will always succeed after a short processing delay.
+                  </p>
+                  <Button
+                    type="button"
+                    className="rounded-full bg-[#2E7D32] text-white hover:bg-[#256428] px-4 py-2 text-xs font-semibold"
+                    onClick={() => {
+                      setShowPaymentModal(true);
+                      setPaymentStage("details");
+                    }}
+                  >
+                    Proceed to Pay (Fake)
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-[24px] border border-[#E7DCCA] bg-white/95 shadow-[0_20px_50px_rgba(93,74,51,0.12)]">
+                <CardHeader>
                   <CardTitle className="text-xl text-[#1F2D3D]">Quick actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -675,6 +702,108 @@ const Dashboard = () => {
       >
         <Plus className="h-6 w-6" />
       </Button>
+
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#E7DCCA] bg-white p-6 shadow-2xl text-xs text-[#5B4D3B] space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#B09782]">Dev checkout</p>
+                <p className="text-sm font-semibold text-[#1F2D3D]">Simulated payment window</p>
+              </div>
+              <button
+                type="button"
+                className="text-[11px] text-[#7A6A58] hover:text-[#1F2D3D]"
+                onClick={() => {
+                  setShowPaymentModal(false);
+                  setPaymentStage("details");
+                }}
+              >
+                Close
+              </button>
+            </div>
+
+            {paymentStage === "details" && (
+              <div className="space-y-3">
+                <p>
+                  This is a purely frontend simulation inspired by the auction checkout. Fill in any values below and
+                  click Pay to see a fake success state.
+                </p>
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-[#7A6A58]">Name on card</label>
+                    <input
+                      type="text"
+                      className="w-full rounded-md border border-[#E6DFD4] px-3 py-1 text-xs"
+                      placeholder="Demo User"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-[#7A6A58]">Card number</label>
+                    <input
+                      type="text"
+                      className="w-full rounded-md border border-[#E6DFD4] px-3 py-1 text-xs"
+                      placeholder="4111 1111 1111 1111"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 space-y-1">
+                      <label className="text-[11px] text-[#7A6A58]">Expiry</label>
+                      <input
+                        type="text"
+                        className="w-full rounded-md border border-[#E6DFD4] px-2 py-1 text-xs"
+                        placeholder="12/28"
+                      />
+                    </div>
+                    <div className="w-20 space-y-1">
+                      <label className="text-[11px] text-[#7A6A58]">CVV</label>
+                      <input
+                        type="password"
+                        className="w-full rounded-md border border-[#E6DFD4] px-2 py-1 text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  className="mt-1 w-full rounded-full bg-[#2E7D32] text-white hover:bg-[#256428] px-4 py-2 text-xs font-semibold"
+                  onClick={() => {
+                    setPaymentStage("processing");
+                    window.setTimeout(() => {
+                      setPaymentStage("success");
+                    }, 1200);
+                  }}
+                >
+                  Pay & simulate success
+                </Button>
+              </div>
+            )}
+
+            {paymentStage === "processing" && (
+              <p className="text-[11px] text-[#7A6A58]">
+                Processing your simulated payment… this will not contact any real gateway.
+              </p>
+            )}
+
+            {paymentStage === "success" && (
+              <div className="space-y-2 text-[11px] text-[#1B5E20]">
+                <p className="font-semibold">Payment simulated successfully.</p>
+                <p>
+                  You can now pretend this order is paid and continue the rest of the demo flow (orders, logistics,
+                  notifications) without touching live payment infrastructure.
+                </p>
+                <Button
+                  type="button"
+                  className="mt-1 w-full rounded-full bg-[#2E7D32] text-white hover:bg-[#256428] px-4 py-2 text-xs font-semibold"
+                  onClick={() => setShowPaymentModal(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

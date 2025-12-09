@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { useNavigate, useLocation } from "react-router-dom";
 import { API_BASE } from "@/config/api";
 
-type UserRole = "admin" | "consumer" | "seller" | "fpo";
+type UserRole = "admin" | "consumer" | "seller" | "fpo" | "institution" | "transporter";
 
 interface User {
   id: number;
@@ -28,6 +28,8 @@ export const mapBackendRole = (role: string): UserRole => {
   if (r === "CONSUMER") return "consumer";
   if (r === "FPO") return "fpo";
   if (r === "BUSINESS" || r === "SELLER") return "seller";
+  if (r === "INSTITUTION") return "institution";
+  if (r === "TRANSPORTER") return "transporter";
   if (r === "ADMIN") return "admin";
   console.warn("Unknown backend role:", r);
   return "consumer"; // safe fallback to avoid app crash
@@ -126,6 +128,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (normalized.role === "consumer") navigate("/dashboard/consumer", { replace: true });
       else if (normalized.role === "seller") navigate("/dashboard/seller", { replace: true });
       else if (normalized.role === "fpo") navigate("/dashboard/fpo", { replace: true });
+      else if (normalized.role === "institution") navigate("/dashboard/institution", { replace: true });
+      else if (normalized.role === "transporter") navigate("/dashboard/transporter", { replace: true });
       else navigate("/dashboard/admin", { replace: true });
 
     } catch (err: any) {

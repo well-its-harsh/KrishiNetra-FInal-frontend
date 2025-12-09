@@ -7,9 +7,7 @@ import { useAuth, mapBackendRole } from "@/contexts/AuthContext";
 import type { SignUpData } from "./NewSignUpForm";
 import { toast } from "sonner";
 import { useState } from "react";
-
-
-const API_BASE = import.meta.env.VITE_API_BASE_URl|| "http://127.0.0.1:8000";
+import { API_BASE } from "@/config/api";
 
 interface SignUpStep5NewProps {
   formData: SignUpData;
@@ -63,21 +61,29 @@ const SignUpStep5New = ({ formData }: SignUpStep5NewProps) => {
     const fullUser = await profileRes.json();
 
     // Save into AuthContext (true final state)
-    const backendRole = fullUser.role;
-    setUser({
+    const backendRole = fullUser.role as string;
+    const normalizedRole = mapBackendRole(backendRole);
+
+    const normalizedUser = {
       id: fullUser.id,
       email: fullUser.email,
       name: fullUser.name,
-      role: mapBackendRole(backendRole),
+      role: normalizedRole,
       email_verified: fullUser.is_authenticated,
       verification_status: fullUser.is_active ? "verified" : "pending",
-    });
+    } as const;
 
-    // Redirect using REAL backend role
-    if (backendRole === "CONSUMER") navigate("/dashboard/consumer", { replace: true });
-    else if (backendRole === "FPO") navigate("/dashboard/fpo", { replace: true });
-    else if (backendRole === "BUSINESS") navigate("/dashboard/seller", { replace: true });
-    else if (backendRole === "ADMIN") navigate("/dashboard/admin", { replace: true });
+    setUser(normalizedUser as any);
+    localStorage.setItem("user", JSON.stringify(normalizedUser));
+    localStorage.setItem("user_id", String(fullUser.id));
+
+    // Redirect using normalized role (same mapping as AuthContext.login)
+    if (normalizedRole === "consumer") navigate("/dashboard/consumer", { replace: true });
+    else if (normalizedRole === "seller") navigate("/dashboard/seller", { replace: true });
+    else if (normalizedRole === "fpo") navigate("/dashboard/seller", { replace: true });
+    else if (normalizedRole === "institution") navigate("/dashboard/institution", { replace: true });
+    else if (normalizedRole === "transporter") navigate("/dashboard/transporter", { replace: true });
+    else if (normalizedRole === "admin") navigate("/dashboard/admin", { replace: true });
     else navigate("/", { replace: true });
 
   } catch (err) {

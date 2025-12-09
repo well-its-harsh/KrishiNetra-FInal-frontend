@@ -31,6 +31,33 @@ import ragiFlourImage from "@/assets/product-ragi-flour.jpg";
 import foxtailMilletImage from "@/assets/product-foxtail-millet.jpg";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addToCartApi, checkProductAvailability, fetchProductDetail, ProductDetail as ApiProductDetail } from "@/lib/api";
+import { TraceCinematicModal } from "@/components/traceability/TraceCinematicModal";
+import { LedgerTimeline } from "@/components/auction/LedgerTimeline";
+import { useAuctionLedger } from "@/hooks/useAuctionLedger";
+
+type NormalizedProduct = {
+  id: string;
+  title: string;
+  brand: string;
+  price: number;
+  mrp: number;
+  unit: string;
+  images: string[];
+  rating: number;
+  reviewCount: number;
+  badges: string[];
+  description: string;
+  nutritionalInfo: {
+    protein: string;
+    fiber: string;
+    iron: string;
+    calcium: string;
+  };
+  subscription?: {
+    enabled?: boolean;
+    interval?: string | null;
+  };
+};
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -38,6 +65,7 @@ const ProductDetail = () => {
   const queryClient = useQueryClient();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [traceOpen, setTraceOpen] = useState(false);
 
   const numericId = id ? parseInt(id, 10) : NaN;
 
@@ -60,7 +88,7 @@ const ProductDetail = () => {
     enabled: Number.isFinite(numericId),
   });
 
-  const product = (() => {
+  const product: NormalizedProduct = (() => {
     if (!apiProduct) {
       return {
         id: id || "1",
@@ -84,32 +112,67 @@ const ProductDetail = () => {
       };
     }
 
-    const priceNumber = typeof apiProduct.price === "string" ? parseFloat(apiProduct.price) : apiProduct.price;
-    const misc = apiProduct.miscellaneous_data || {};
+    const priceNumber =
+      typeof apiProduct.price === "string" ? parseFloat(apiProduct.price) : apiProduct.price;
+    const misc = (apiProduct as any).miscellaneous_data || {};
+
+    const subscription = (misc.subscription || {}) as {
+      enabled?: boolean;
+      interval?: string | null;
+    };
+
+    const images: string[] =
+      (apiProduct.images && apiProduct.images.length > 0
+        ? apiProduct.images
+        : [apiProduct.thumbnail].filter(Boolean)) || [pearlMilletImage];
+
+    const nutritionalInfoSource = (misc.nutritionalInfo || {}) as Record<string, string>;
 
     return {
       id: String(apiProduct.id),
-      title: apiProduct.name,
+      title: (apiProduct as any).name || "Organic Millet",
       brand: misc.brand || "Millet producer",
       price: priceNumber,
       mrp: misc.mrp || priceNumber,
       unit: misc.unit || "per kg",
-      images: (apiProduct.images && apiProduct.images.length > 0 ? apiProduct.images : [apiProduct.thumbnail].filter(Boolean)) as string[] || [pearlMilletImage],
-      rating: misc.rating || 4.5,
+      images,
+      rating: misc.rating || 0,
       reviewCount: misc.reviewCount || 0,
       badges: (misc.badges as string[]) || ["FPO-Verified"],
       description:
         apiProduct.description ||
         "Premium organic millet sourced from trusted farmer networks. Naturally rich in fiber, protein, and minerals.",
-      nutritionalInfo:
-        (misc.nutritionalInfo as Record<string, string>) || {
-          protein: "11g",
-          fiber: "8g",
-          iron: "3mg",
-          calcium: "42mg",
-        },
+      nutritionalInfo: {
+        protein: nutritionalInfoSource.protein || "0g",
+        fiber: nutritionalInfoSource.fiber || "0g",
+        iron: nutritionalInfoSource.iron || "0mg",
+        calcium: nutritionalInfoSource.calcium || "0mg",
+      },
+      subscription,
     };
   })();
+
+  const subscriptionLabel = (() => {
+    const sub = product.subscription;
+    if (!sub || !sub.enabled) return null;
+    const interval = (sub.interval || "").toString();
+    if (!interval) return "Subscription";
+    if (interval === "WEEKLY") return "Weekly subscription";
+    if (interval === "MONTHLY") return "Monthly subscription";
+    if (interval === "QUARTERLY") return "Quarterly subscription";
+    if (interval === "YEARLY") return "Yearly subscription";
+    return "Subscription";
+  })();
+
+  // Blockchain source linkage for ledger view
+  const sourceAuctionLotIds = ((apiProduct?.miscellaneous_data as any)?.source_auction_lot_ids as number[] | undefined) || [];
+  const primaryAuctionId = sourceAuctionLotIds.length > 0 ? sourceAuctionLotIds[0] : null;
+
+  const {
+    blocks: ledgerBlocks,
+    loading: ledgerLoading,
+    error: ledgerError,
+  } = useAuctionLedger(primaryAuctionId || 0);
 
   const summaryInfo = [
     { label: "Verified by", value: "FPO Council", icon: ShieldCheck, tone: "bg-[#E4F5E6] text-[#2E7D32]" },
@@ -317,8 +380,19 @@ const ProductDetail = () => {
                   <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
                   Demand ↑
                 </Badge>
+                {subscriptionLabel && (
+                  <Badge className="rounded-full bg-[#E1EEF9] text-[#1F4B6B]">
+                    {subscriptionLabel}
+                  </Badge>
+                )}
               </div>
               <p className="text-sm text-[#7A6A58]">{product.unit}</p>
+              {subscriptionLabel && (
+                <p className="text-xs text-[#7A6A58]">
+                  This product is listed on a subscription basis. You can set up recurring deliveries with this
+                  cadence during your orders.
+                </p>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -391,6 +465,13 @@ const ProductDetail = () => {
               <Button variant="outline" size="icon" className="btn-ripple rounded-full border-[#E6DFD4] bg-white text-[#7A6A58] hover:bg-[#FFF8EC]">
                 <Share2 className="h-5 w-5" />
               </Button>
+              <Button
+                variant="outline"
+                className="btn-ripple rounded-full border-[#E6DFD4] bg-white text-[#2E7D32] hover:bg-[#E4F5E6] text-xs px-4"
+                onClick={() => setTraceOpen(true)}
+              >
+                View Trace
+              </Button>
             </div>
           </div>
         </section>
@@ -433,6 +514,7 @@ const ProductDetail = () => {
             </TabsContent>
 
             <TabsContent value="trace" className="mt-8 space-y-4">
+              {/* Seed-to-shelf timeline (visual story) */}
               <Card className="rounded-[28px] border border-[#E6DFD4] bg-white/95 shadow-[0_25px_70px_rgba(95,79,54,0.1)]">
                 <CardContent className="space-y-6 p-8">
                   <h3 className="text-2xl font-semibold text-[#1F2D3D]">Seed-to-shelf timeline</h3>
@@ -467,6 +549,43 @@ const ProductDetail = () => {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Blockchain ledger (on-chain proof) */
+              }
+              <Card className="rounded-[28px] border border-[#E6DFD4] bg-white/95 shadow-[0_25px_70px_rgba(95,79,54,0.1)]">
+                <CardContent className="space-y-4 p-8">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-2xl font-semibold text-[#1F2D3D]">Blockchain ledger</h3>
+                    <span className="rounded-full bg-[#E4F5E6] px-3 py-1 text-xs font-semibold text-[#2E7D32]">
+                      Cryptographic proof of journey
+                    </span>
+                  </div>
+
+                  {!primaryAuctionId && (
+                    <p className="text-sm text-[#7A6A58]">
+                      This product is not yet linked to a specific on-chain auction lot. As sellers start listing
+                      products directly from verified auction lots, you&apos;ll see a live blockchain ledger here.
+                    </p>
+                  )}
+
+                  {primaryAuctionId && (
+                    <div className="mt-2">
+                      {ledgerLoading && (
+                        <p className="text-sm text-[#7A6A58]">Loading blockchain records…</p>
+                      )}
+                      {ledgerError && (
+                        <p className="text-sm text-[#C6533D]">
+                          Unable to load blockchain ledger right now. Please try again later.
+                        </p>
+                      )}
+                      {!ledgerLoading && !ledgerError && (
+                        <LedgerTimeline blocks={ledgerBlocks || []} />
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               <div className="flex flex-wrap gap-3">
                 <Button variant="outline" className="btn-ripple rounded-full border-[#E6DFD4] bg-white text-[#2E7D32] hover:bg-[#E4F5E6]">
                   Download traceability report (PDF)
@@ -518,6 +637,12 @@ const ProductDetail = () => {
             ))}
           </div>
         </section>
+
+        <TraceCinematicModal
+          productId={numericId}
+          open={traceOpen}
+          onClose={() => setTraceOpen(false)}
+        />
       </main>
     </div>
   );

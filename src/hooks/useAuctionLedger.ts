@@ -6,7 +6,9 @@ export interface BlockRecord {
   timestamp: string;
   auction_id: number;
   action: string;
+  data?: any;              // backend uses this key
   details: string;
+        // fallback for older schema
   previous_hash: string;
   hash: string;
 }
@@ -20,14 +22,20 @@ export const useAuctionLedger = (auctionId: number) => {
     if (!auctionId) return;
 
     setLoading(true);
-    fetch(`${API_BASE}/blockchain/?auction_id=${auctionId}`, {
+    setError(null);
+
+   fetch(`${API_BASE}/blockchain/${auctionId}/history`, {  // Added comma here
       credentials: "include",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load blockchain records");
         return res.json();
       })
-      .then((data) => setBlocks(data))
+      .then((json) => {
+        // backend returns { blocks: [...] }
+        const arr = Array.isArray(json) ? json : json.blocks;
+        setBlocks(arr ?? []);
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [auctionId]);

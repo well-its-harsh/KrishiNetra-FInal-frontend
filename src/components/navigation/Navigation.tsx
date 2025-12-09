@@ -1,13 +1,16 @@
-import { Search, User, Menu } from "lucide-react";
+import { Search, User, Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/consumer/button";
 import { Input } from "@/components/ui/consumer/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/consumer/sheet";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CartDrawer } from "@/components/consumer/CartDrawer";
+import { NotificationBell } from "@/components/common/NotificationBell";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Navigation = () => {
   const [cartCount] = useState(0);
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -43,14 +46,27 @@ export const Navigation = () => {
           <Button variant="ghost" size="sm" asChild>
             <Link to="/dashboard">Dashboard</Link>
           </Button>
+          <NotificationBell />
           <CartDrawer />
           <Button variant="ghost" size="sm">
             <User className="h-5 w-5" />
           </Button>
+          {isAuthenticated && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="flex items-center gap-1 text-red-700 hover:text-red-800 hover:bg-red-50"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="text-xs font-semibold">Logout</span>
+            </Button>
+          )}
         </nav>
 
         {/* Mobile Menu */}
         <div className="flex items-center gap-2 md:hidden">
+          <NotificationBell />
           <CartDrawer />
           <Sheet>
             <SheetTrigger asChild>
@@ -67,6 +83,15 @@ export const Navigation = () => {
                   <Link to="/dashboard">Dashboard</Link>
                 </Button>
                 <Button variant="ghost" className="justify-start">Profile</Button>
+                {isAuthenticated && (
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-red-700 hover:text-red-800 hover:bg-red-50"
+                    onClick={logout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>

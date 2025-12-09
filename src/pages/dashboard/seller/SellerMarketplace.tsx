@@ -148,7 +148,7 @@ const SellerMarketplace = () => {
               </button>
               <button
                 className="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-white"
-                onClick={() => navigate("/products/create")}
+                onClick={() => navigate("/products/listing-mode")}
               >
                 <Plus className="h-4 w-4 text-[#2E7D32]" />
                 <span>List product</span>
@@ -159,6 +159,20 @@ const SellerMarketplace = () => {
               >
                 <List className="h-4 w-4 text-[#2E7D32]" />
                 <span>View products</span>
+              </button>
+              <button
+                className="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-white"
+                onClick={() => navigate("/bulk-products/my-listings")}
+              >
+                <List className="h-4 w-4 text-[#2E7D32]" />
+                <span>My bulk listings</span>
+              </button>
+              <button
+                className="flex items-center gap-2 rounded-full px-3 py-2 hover:bg-white"
+                onClick={() => navigate("/dashboard/seller/contracts")}
+              >
+                <List className="h-4 w-4 text-[#2E7D32]" />
+                <span>Institution contracts</span>
               </button>
               <div className="mt-2 border-t border-dashed border-[#E6DFD4] pt-2" />
               <button
@@ -188,7 +202,7 @@ const SellerMarketplace = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div
                 className="flex items-center gap-4 rounded-2xl border border-[#E6DFD4] bg-[#FFF8EC]/90 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(95,79,54,0.18)] cursor-pointer"
-                onClick={() => navigate("/products/create")}
+                onClick={() => navigate("/products/listing-mode")}
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2E7D32]/10 text-[#2E7D32]">
                   <Plus className="h-5 w-5" />

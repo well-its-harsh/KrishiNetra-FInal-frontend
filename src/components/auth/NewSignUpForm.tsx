@@ -13,7 +13,7 @@ export interface SignUpData {
   terms_accepted: boolean;
   
   // Step 2
-  role: 'CONSUMER' | 'FPO' | 'BUSINESS' | null;
+  role: 'CONSUMER' | 'FPO' | 'BUSINESS' | 'INSTITUTION' | 'TRANSPORTER' | null;
   
   // Step 2 (continued) / Step 3
   aadhaar_verified: boolean;
@@ -21,6 +21,11 @@ export interface SignUpData {
   email_otp_verified: boolean;
   email_otp: string;
   
+  // Documents
+  documents?: {
+    upload_ids: string[];
+  };
+
   // Internal
   user_id?: number;
   current_step: number;

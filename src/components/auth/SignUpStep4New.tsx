@@ -26,8 +26,7 @@ const SignUpStep4New = ({ formData, updateFormData, onNext, onPrev }: SignUpStep
       setChecking(true);
       try {
         // TODO: Call backend to check if documents are required
-        // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        // const response = await fetch(`${API_BASE_URL}verification/check-documents?user_id=${formData.user_id}&role=${formData.role}`);
+        // const response = await fetch(`${API_BASE}/verification/check-documents?user_id=${formData.user_id}&role=${formData.role}`);
         // const data = await response.json();
         // setDocumentsRequired(data.required);
         
@@ -54,14 +53,13 @@ const SignUpStep4New = ({ formData, updateFormData, onNext, onPrev }: SignUpStep
     setUploading(true);
     try {
       // TODO: Upload files via backend
-      // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
       // const uploadFormData = new FormData();
       // Array.from(files).forEach((file) => {
       //   uploadFormData.append('files', file);
       // });
       // uploadFormData.append('user_id', formData.user_id.toString());
       // 
-      // const response = await fetch(`${API_BASE_URL}verification/upload`, {
+      // const response = await fetch(`${API_BASE}/verification/upload`, {
       //   method: 'POST',
       //   body: formData,
       // });

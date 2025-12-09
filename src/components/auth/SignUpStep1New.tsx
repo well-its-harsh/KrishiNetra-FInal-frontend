@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { API_BASE } from "@/config/api";
 import { User, Mail, Lock, ArrowRight, ShoppingCart, Building, Users } from "lucide-react";
 import type { SignUpData } from "./NewSignUpForm";
-import { useNavigate } from "react-router-dom";
 
 interface SignUpStep1NewProps {
   formData: SignUpData;
@@ -18,7 +18,6 @@ interface SignUpStep1NewProps {
 
 const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProps) => {
   const { language } = useLanguage();
-  const navigate = useNavigate();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +32,7 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
     };
 
     strength = Object.values(checks).filter(Boolean).length;
-    
+
     const messages = {
       HI: {
         weak: "कमजोर - कम से कम 8 अक्षर, 1 बड़ा अक्षर, 1 छोटा अक्षर, 1 अंक, 1 विशेष वर्ण",
@@ -68,20 +67,18 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
     if (!formData.email) {
       newErrors.email = language === "HI" ? "ईमेल आवश्यक है" : "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = language === "HI" ? "वैध ईमेल दर्ज करें" : "Please enter a valid email";
+      newErrors.email = language === "HI" ? "वैध ईमेल दर्ज करें" : "Enter a valid email";
     }
 
-    const passwordCheck = validatePassword(formData.password);
-    if (!passwordCheck.valid) {
-      newErrors.password = passwordCheck.message;
-    }
+    const pwd = validatePassword(formData.password);
+    if (!pwd.valid) newErrors.password = pwd.message;
 
     if (!formData.role) {
-      newErrors.role = language === "HI" ? "कृपया एक भूमिका चुनें" : "Please select a role";
+      newErrors.role = language === "HI" ? "कृपया भूमिका चुनें" : "Please select a role";
     }
 
     if (!formData.terms_accepted) {
-      newErrors.terms = language === "HI" ? "कृपया नियम और शर्तें स्वीकार करें" : "Please accept terms and conditions";
+      newErrors.terms = language === "HI" ? "नियमों व शर्तों को स्वीकार करें" : "Please accept terms & conditions";
     }
 
     setErrors(newErrors);
@@ -90,41 +87,47 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validate()) return;
 
     setLoading(true);
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
       const payload = {
         name: formData.full_name,
         email: formData.email,
         password: formData.password,
         role: formData.role,
+        is_active: true,
+        is_authenticated: true,
       };
 
       const { data: userData } = await axios.post<{ id: number }>(
-        `${API_BASE_URL}/auth/register`,
+        `${API_BASE}/auth/register`,
         payload,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       updateFormData({
         user_id: userData.id,
+        role: formData.role,
         email: formData.email,
         password: formData.password,
-        role: formData.role,
       });
+
       onNext();
     } catch (error: any) {
-      setErrors({ 
-        submit: language === "HI" 
-          ? error.message || "रजिस्ट्रेशन असफल। कृपया पुनः प्रयास करें।" 
-          : error.message || "Registration failed. Please try again." 
-      });
+      if (error.response?.status === 409) {
+        setErrors({
+          submit: language === "HI"
+            ? "यह ईमेल पहले से मौजूद है। लॉगिन करें।"
+            : "This email already exists. Please log in.",
+        });
+      } else {
+        setErrors({
+          submit: language === "HI"
+            ? "रजिस्ट्रेशन असफल। पुनः प्रयास करें।"
+            : "Registration failed. Please try again.",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -132,19 +135,58 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
 
   const passwordStrength = validatePassword(formData.password);
 
+  /** ROLE LIST — FIXED ERROR */
+  const roles = [
+    {
+      id: "CONSUMER",
+      icon: ShoppingCart,
+      title: language === "HI" ? "उपभोक्ता" : "Consumer",
+      description: language === "HI"
+        ? "उत्पाद खरीदें और जागरूकता बढ़ाएं"
+        : "Purchase millet products and spread awareness",
+    },
+    {
+      id: "FPO",
+      icon: Users,
+      title: language === "HI" ? "एफपीओ" : "FPO",
+      description: language === "HI" ? "किसान उत्पादक संगठन" : "Farmer Producer Organization",
+    },
+    {
+      id: "BUSINESS",
+      icon: Building,
+      title: language === "HI" ? "थोक विक्रेता" : "Wholeseller",
+      description: language === "HI" ? "अपने उत्पाद बेचें" : "Sell your millet products",
+    },
+    {
+      id: "INSTITUTION",
+      icon: Building,
+      title: language === "HI" ? "संस्था" : "Institution",
+      description: language === "HI"
+        ? "स्कूल, अस्पताल, सरकारी संस्थान"
+        : "Institutions purchasing for programs & meals",
+    },
+    {
+      id: "TRANSPORTER",
+      icon: Users,
+      title: language === "HI" ? "परिवहन" : "Transporter",
+      description: language === "HI"
+        ? "लॉजिस्टिक्स और ट्रांसपोर्ट"
+        : "Logistics / transport partner",
+    },
+  ];
+
   return (
     <motion.form
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.36, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ duration: 0.36 }}
       onSubmit={handleSubmit}
       className="space-y-6"
     >
+      {/* Full name */}
       <div>
-        <Label htmlFor="full_name" className={`mb-2 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
-          {language === "HI" ? "पूरा नाम" : "Full Name"} <span className="text-[#8C483F]">*</span>
-        </Label>
+        <Label htmlFor="full_name">{language === "HI" ? "पूरा नाम" : "Full Name"} *</Label>
         <div className="relative">
           <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#7C8B56]" />
           <Input
@@ -152,19 +194,15 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
             type="text"
             value={formData.full_name}
             onChange={(e) => updateFormData({ full_name: e.target.value })}
-            className={`pl-10 h-[48px] rounded-xl border-[#D1B48C] focus:border-[#7C8B56] focus:ring-2 focus:ring-[#7C8B56]/20 bg-white ${errors.full_name ? "border-[#8C483F]" : ""}`}
-            placeholder={language === "HI" ? "आपका पूरा नाम" : "Enter your full name"}
+            className={`pl-10 ${errors.full_name ? "border-[#8C483F]" : ""}`}
           />
         </div>
-        {errors.full_name && (
-          <p className="mt-1 text-sm text-[#8C483F]">{errors.full_name}</p>
-        )}
+        {errors.full_name && <p className="text-red-500 text-sm">{errors.full_name}</p>}
       </div>
 
+      {/* Email */}
       <div>
-        <Label htmlFor="email" className={`mb-2 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
-          {language === "HI" ? "ईमेल पता" : "Email Address"} <span className="text-[#8C483F]">*</span>
-        </Label>
+        <Label htmlFor="email">{language === "HI" ? "ईमेल पता" : "Email Address"} *</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#7C8B56]" />
           <Input
@@ -172,19 +210,15 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
             type="email"
             value={formData.email}
             onChange={(e) => updateFormData({ email: e.target.value })}
-            className={`pl-10 h-[48px] rounded-xl border-[#D1B48C] focus:border-[#7C8B56] focus:ring-2 focus:ring-[#7C8B56]/20 bg-white ${errors.email ? "border-[#8C483F]" : ""}`}
-            placeholder={language === "HI" ? "ईमेल पता" : "Email Address"}
+            className={`pl-10 ${errors.email ? "border-[#8C483F]" : ""}`}
           />
         </div>
-        {errors.email && (
-          <p className="mt-1 text-sm text-[#8C483F]">{errors.email}</p>
-        )}
+        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
       </div>
 
+      {/* Password */}
       <div>
-        <Label htmlFor="password" className={`mb-2 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
-          {language === "HI" ? "पासवर्ड" : "Password"} <span className="text-[#8C483F]">*</span>
-        </Label>
+        <Label htmlFor="password">{language === "HI" ? "पासवर्ड" : "Password"} *</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#7C8B56]" />
           <Input
@@ -192,133 +226,95 @@ const SignUpStep1New = ({ formData, updateFormData, onNext }: SignUpStep1NewProp
             type="password"
             value={formData.password}
             onChange={(e) => updateFormData({ password: e.target.value })}
-            className={`pl-10 h-[48px] rounded-xl border-[#D1B48C] focus:border-[#7C8B56] focus:ring-2 focus:ring-[#7C8B56]/20 bg-white ${errors.password ? "border-[#8C483F]" : ""}`}
-            placeholder={language === "HI" ? "पासवर्ड" : "Password"}
+            className={`pl-10 ${errors.password ? "border-[#8C483F]" : ""}`}
           />
         </div>
         {formData.password && (
-          <div className="mt-2">
-            <div className="flex gap-1 mb-1">
-              {[1, 2, 3, 4, 5].map((level) => (
+          <>
+            <div className="flex gap-1 mt-1">
+              {Array.from({ length: 5 }).map((_, i) => (
                 <div
-                  key={level}
-                  className={`h-1.5 flex-1 rounded ${
-                    level <= passwordStrength.strength
-                      ? level <= 2
-                        ? 'bg-[#8C483F]'
-                        : level <= 3
-                        ? 'bg-[#BC8F29]'
-                        : 'bg-[#7C8B56]'
-                      : 'bg-[#D1B48C]'
+                  key={i}
+                  className={`flex-1 h-1.5 rounded ${
+                    i < passwordStrength.strength
+                      ? passwordStrength.strength <= 2
+                        ? "bg-red-500"
+                        : passwordStrength.strength <= 3
+                        ? "bg-yellow-500"
+                        : "bg-green-600"
+                      : "bg-gray-300"
                   }`}
                 />
               ))}
             </div>
-            <p className={`text-xs ${passwordStrength.strength <= 2 ? 'text-[#8C483F]' : passwordStrength.strength <= 3 ? 'text-[#BC8F29]' : 'text-[#7C8B56]'}`}>
-              {passwordStrength.message}
-            </p>
-          </div>
+            <p className="text-xs mt-1">{passwordStrength.message}</p>
+          </>
         )}
-        {errors.password && (
-          <p className="mt-1 text-sm text-[#8C483F]">{errors.password}</p>
-        )}
+        {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
       </div>
 
+      {/* Roles */}
       <div>
-        <Label className={`mb-3 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
-          {language === "HI" ? "अपनी भूमिका चुनें" : "Select Your Role"} <span className="text-[#8C483F]">*</span>
-        </Label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[{
-            id: 'CONSUMER' as const,
-            icon: ShoppingCart,
-            title: language === "HI" ? "उपभोक्ता" : "Consumer",
-            description: language === "HI"
-              ? "मिलेट उत्पाद खरीदें और जागरूकता फैलाएं"
-              : "Purchase millet products and spread awareness",
-          }, {
-            id: 'FPO' as const,
-            icon: Users,
-            title: language === "HI" ? "एफपीओ" : "FPO",
-            description: language === "HI"
-              ? "किसान उत्पादक संगठन"
-              : "Farmer Producer Organization",
-          }, {
-            id: 'BUSINESS' as const,
-            icon: Building,
-            title: language === "HI" ? "थोक विक्रेता" : "Wholeseller",
-            description: language === "HI"
-              ? "अपने मिलेट उत्पाद बेचें"
-              : "Sell your millet products",
-          }].map((role) => {
+        <Label>{language === "HI" ? "अपनी भूमिका चुनें" : "Select Your Role"} *</Label>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+          {roles.map((role) => {
             const Icon = role.icon;
             const isSelected = formData.role === role.id;
-
             return (
               <button
                 key={role.id}
                 type="button"
-                onClick={() => updateFormData({ role: role.id })}
-                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] ${
+                onClick={() => updateFormData({ role: role.id as SignUpData["role"] })}
+
+                className={`p-4 rounded-xl border-2 transition ${
                   isSelected
-                    ? 'border-[#7C8B56] bg-[#7C8B56]/10 shadow-lg'
-                    : 'border-[#D1B48C] bg-white hover:border-[#7C8B56]'
-                } cursor-pointer text-left`}
+                    ? "border-[#7C8B56] bg-[#7C8B56]/10 shadow-lg"
+                    : "border-[#D1B48C] bg-white hover:border-[#7C8B56]"
+                }`}
               >
-                <Icon className={`h-8 w-8 mb-2 ${isSelected ? 'text-[#7C8B56]' : 'text-[#D1B48C]'}`} />
-                <h4 className={`font-semibold mb-1 text-[#3F5E46] ${language === "HI" ? "hindi" : ""}`}>
-                  {role.title}
-                </h4>
-                <p className={`text-sm text-[#7C8B56] ${language === "HI" ? "hindi" : ""}`}>
-                  {role.description}
-                </p>
+                <Icon className={`h-8 w-8 mb-2 ${isSelected ? "text-[#7C8B56]" : "text-[#D1B48C]"}`} />
+                <h4 className="font-semibold text-[#3F5E46]">{role.title}</h4>
+                <p className="text-sm text-[#7C8B56]">{role.description}</p>
               </button>
             );
           })}
         </div>
-        {errors.role && (
-          <p className="mt-1 text-sm text-[#8C483F]">{errors.role}</p>
-        )}
+        {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
       </div>
 
-      <div className="flex items-start space-x-2">
+      {/* Terms */}
+      <div className="flex gap-2">
         <Checkbox
           id="terms"
           checked={formData.terms_accepted}
           onCheckedChange={(checked) => updateFormData({ terms_accepted: checked === true })}
-          className="mt-1 border-[#7C8B56] data-[state=checked]:bg-[#7C8B56] data-[state=checked]:border-[#7C8B56]"
         />
-        <Label
-          htmlFor="terms"
-          className={`text-sm cursor-pointer text-[#3F5E46] ${language === "HI" ? "hindi" : ""} ${errors.terms ? "text-[#8C483F]" : ""}`}
-        >
-          {language === "HI" 
+        <Label htmlFor="terms">
+          {language === "HI"
             ? "मैं नियम और शर्तें तथा गोपनीयता नीति से सहमत हूं"
             : "I agree to Terms & Conditions"}
         </Label>
       </div>
-      {errors.terms && (
-        <p className="text-sm text-[#8C483F]">{errors.terms}</p>
-      )}
+      {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
 
-      {errors.submit && (
-        <p className="text-sm text-[#8C483F]">{errors.submit}</p>
-      )}
+      {errors.submit && <p className="text-red-500 text-sm">{errors.submit}</p>}
 
       <Button
-        type="submit"
         disabled={loading}
-        className="w-full h-[52px] bg-[#BC8F29] hover:bg-[#BC8F29]/90 text-white rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-semibold text-base"
+        type="submit"
+        className="w-full flex items-center justify-center gap-2"
       >
         {loading
-          ? (language === "HI" ? "रजिस्टर हो रहा है..." : "Registering...")
-          : (language === "HI" ? "अगला कदम" : "NEXT STEP")
-        }
-        <ArrowRight className="ml-2 h-5 w-5" />
+          ? language === "HI"
+            ? "रजिस्टर हो रहा है..."
+            : "Registering..."
+          : language === "HI"
+          ? "अगला कदम"
+          : "NEXT STEP"}
+        <ArrowRight />
       </Button>
     </motion.form>
   );
 };
 
 export default SignUpStep1New;
-

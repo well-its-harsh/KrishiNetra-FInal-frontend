@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { API_BASE } from "@/config/api";
 import { ShoppingCart, Building, Users, ArrowRight, ArrowLeft } from "lucide-react";
 import type { SignUpData } from "./NewSignUpForm";
 
@@ -60,10 +61,8 @@ const SignUpStep2New = ({ formData, updateFormData, onNext, onPrev }: SignUpStep
   setError("");
 
   try {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
     // 1️⃣ Update user role in backend
-    const res = await fetch(`${API_BASE_URL}/users/${formData.user_id}`, {
+    const res = await fetch(`${API_BASE}/users/${formData.user_id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -78,7 +77,7 @@ const SignUpStep2New = ({ formData, updateFormData, onNext, onPrev }: SignUpStep
     }
 
     // 2️⃣ Fetch updated profile to confirm saved role
-    const verifyRes = await fetch(`${API_BASE_URL}/users/${formData.user_id}`, {
+    const verifyRes = await fetch(`${API_BASE}/users/${formData.user_id}`, {
       credentials: "include",
     });
 

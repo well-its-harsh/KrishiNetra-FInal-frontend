@@ -351,6 +351,210 @@ export const fetchProducts = async (params?: ProductQueryParams): Promise<Produc
   return response.json();
 };
 
+// ==================== LOGISTICS (SHIPMENTS & JOBS) ====================
+
+export type ShipmentSummary = {
+  id: number;
+  tracking_number: string;
+  order_id?: number | null;
+  auction_order_id?: number | null;
+  contract_id?: number | null;
+  origin_address: string;
+  destination_address: string;
+  status: string;
+};
+
+export type LogisticsJobSummary = {
+  id: number;
+  shipment_id: number;
+  transporter_id?: number | null;
+  delivery_fee: number | string;
+  status: string;
+};
+
+export const createShipmentForAuctionOrder = async (
+  auction_order_id: number,
+  origin_address: string,
+  destination_address: string,
+): Promise<ShipmentSummary> => {
+  const response = await fetch(`${API_BASE_URL}/logistics/shipment/auction-order`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ auction_order_id, origin_address, destination_address }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || "Failed to create shipment for auction order");
+  }
+
+  return response.json();
+};
+
+export const createLogisticsJob = async (
+  shipment_id: number,
+  delivery_fee: number,
+): Promise<LogisticsJobSummary> => {
+  const response = await fetch(`${API_BASE_URL}/logistics/jobs`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ shipment_id, delivery_fee }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || "Failed to create logistics job");
+  }
+
+  return response.json();
+};
+
+export const acceptLogisticsJob = async (jobId: number): Promise<LogisticsJobSummary> => {
+  const response = await fetch(`${API_BASE_URL}/logistics/jobs/${jobId}/accept`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || "Failed to accept logistics job");
+  }
+
+  return response.json();
+};
+
+// ==================== BULK CONTRACTS (B2B) ====================
+
+export type ContractStatusString =
+  | 'DRAFT'
+  | 'PENDING_SELLER_APPROVAL'
+  | 'PENDING_BUYER_APPROVAL'
+  | 'ACTIVE'
+  | 'COMPLETED'
+  | 'REJECTED'
+  | string;
+
+export type Contract = {
+  id: number;
+  status: ContractStatusString;
+  bulk_product_id: number;
+  total_quantity: number;
+  price_per_unit: number | string;
+  buyer_id: number;
+  seller_id: number;
+  proposer_id: number;
+  start_date?: string | null;
+  end_date?: string | null;
+};
+
+export type ContractCreatePayload = {
+  bulk_product_id: number;
+  total_quantity: number;
+  price_per_unit: number;
+  start_date?: string | null;
+  end_date?: string | null;
+  notes?: string | null;
+};
+
+export const createContract = async (
+  payload: ContractCreatePayload,
+): Promise<Contract> => {
+  const response = await fetch(`${API_BASE_URL}/contracts/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to create contract');
+  }
+  return response.json();
+};
+
+export const fetchMyContracts = async (
+  filter: 'received' | 'sent' | 'all' = 'all',
+): Promise<Contract[]> => {
+  const url = new URL(`${API_BASE_URL}/contracts/`);
+  if (filter) {
+    url.searchParams.set('filter', filter);
+  }
+  const response = await fetch(url.toString(), {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch contracts');
+  }
+  return response.json();
+};
+
+export const approveContract = async (contractId: number): Promise<Contract> => {
+  const response = await fetch(`${API_BASE_URL}/contracts/${contractId}/approve`, {
+    method: 'PUT',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to approve contract');
+  }
+  return response.json();
+};
+
+export const rejectContract = async (
+  contractId: number,
+  cancellation_reason: string,
+): Promise<Contract> => {
+  const response = await fetch(`${API_BASE_URL}/contracts/${contractId}/reject`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ cancellation_reason }),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to reject contract');
+  }
+  return response.json();
+};
+
+export const fetchContractShippingLabel = async (
+  contractId: number,
+): Promise<string> => {
+  const response = await fetch(`${API_BASE_URL}/contracts/${contractId}/shipping-label`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to fetch contract shipping label');
+  }
+
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+};
+
+export const confirmContractDelivery = async (
+  contractId: number,
+  qr_token: string,
+): Promise<Contract> => {
+  const url = new URL(`${API_BASE_URL}/contracts/${contractId}/confirm-delivery`);
+  url.searchParams.set('qr_token', qr_token);
+  const response = await fetch(url.toString(), {
+    method: 'PUT',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to confirm delivery');
+  }
+  return response.json();
+};
+
 export type ProductCreatePayload = {
   name: string;
   description?: string | null;
@@ -423,6 +627,94 @@ export const fetchProductDetail = async (productId: number): Promise<ProductDeta
   return response.json();
 };
 
+// ==================== BULK PRODUCTS (B2B) ====================
+
+export type BulkProduct = {
+  id: number;
+  name: string;
+  description?: string | null;
+  category: string;
+  min_order_quantity: number | string;
+  supply_capacity: number | string;
+  unit: string;
+  base_price_per_unit: number | string;
+  image_url?: string | null;
+  seller_id: number;
+};
+
+export type BulkProductCreatePayload = {
+  name: string;
+  description?: string | null;
+  category: string;
+  min_order_quantity: number;
+  supply_capacity: number;
+  unit: string;
+  base_price_per_unit: number;
+  image_url?: string | null;
+};
+
+export type BulkProductUpdatePayload = BulkProductCreatePayload;
+
+export const createBulkProduct = async (
+  payload: BulkProductCreatePayload,
+): Promise<BulkProduct> => {
+  const response = await fetch(`${API_BASE_URL}/bulk-products/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to create bulk product');
+  }
+  return response.json();
+};
+
+export const fetchBulkProducts = async (
+  skip: number = 0,
+  limit: number = 100,
+): Promise<BulkProduct[]> => {
+  const url = new URL(`${API_BASE_URL}/bulk-products/`);
+  url.searchParams.set('skip', String(skip));
+  url.searchParams.set('limit', String(limit));
+
+  const response = await fetch(url.toString(), {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch bulk products');
+  }
+  return response.json();
+};
+
+export const fetchMyBulkProducts = async (): Promise<BulkProduct[]> => {
+  const response = await fetch(`${API_BASE_URL}/bulk-products/my-listings`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch my bulk products');
+  }
+  return response.json();
+};
+
+export const updateBulkProduct = async (
+  productId: number,
+  payload: BulkProductUpdatePayload,
+): Promise<BulkProduct> => {
+  const response = await fetch(`${API_BASE_URL}/bulk-products/${productId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to update bulk product');
+  }
+  return response.json();
+};
+
 export const checkProductAvailability = async (
   productId: number,
   quantity: number,
@@ -437,6 +729,43 @@ export const checkProductAvailability = async (
   }
   return response.json();
 };
+
+// ==================== WALLET (INSTITUTION / B2B) ====================
+
+export type WalletSummary = {
+  id: number;
+  user_id: number;
+  balance: number | string;
+  frozen_balance?: number | string;
+  created_at: string;
+  updated_at: string;
+};
+
+export const getWallet = async (): Promise<WalletSummary> => {
+  const response = await fetch(`${API_BASE_URL}/wallet/`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to fetch wallet');
+  }
+  return response.json();
+};
+
+export const rechargeWallet = async (amount: number): Promise<WalletSummary> => {
+  const url = new URL(`${API_BASE_URL}/wallet/recharge`);
+  url.searchParams.set('amount', String(amount));
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to recharge wallet');
+  }
+  return response.json();
+};
+
 // ==================== CART & ORDERS ====================
 
 export type CartProduct = {
@@ -665,6 +994,92 @@ export const cancelOrderApi = async (orderId: number): Promise<OrderResponse> =>
   return response.json();
 };
 
+// ==================== AUCTION PAYMENT (DEV) ====================
+
+export const simulateAuctionPayment = async (
+  auctionOrderId: number,
+): Promise<{ status: string; message: string }> => {
+  const response = await fetch(`${API_BASE_URL}/payment/dev/simulate-payment`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ auction_order_id: auctionOrderId }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to simulate payment');
+  }
+
+  return response.json();
+};
+
+// ==================== NOTIFICATIONS ====================
+
+export type NotificationTypeString =
+  | 'SYSTEM'
+  | 'AUCTION_OUTBID'
+  | 'AUCTION_WON'
+  | 'AUCTION_LOST'
+  | 'AUCTION_ENDED'
+  | 'ORDER_UPDATE'
+  | 'PAYMENT_RECEIVED';
+
+export type NotificationOut = {
+  id: number;
+  recipient_id: number;
+  title: string;
+  message: string;
+  type: NotificationTypeString;
+  related_object_id?: number | null;
+  related_object_type?: string | null;
+  is_read: boolean;
+  created_at: string;
+};
+
+export const fetchNotifications = async (
+  skip: number = 0,
+  limit: number = 20,
+): Promise<NotificationOut[]> => {
+  const url = new URL(`${API_BASE_URL}/notifications/`);
+  url.searchParams.set('skip', String(skip));
+  url.searchParams.set('limit', String(limit));
+
+  const response = await fetch(url.toString(), {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to fetch notifications');
+  }
+  return response.json();
+};
+
+export const fetchUnreadNotificationCount = async (): Promise<number> => {
+  const response = await fetch(`${API_BASE_URL}/notifications/unread-count`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to fetch unread notifications');
+  }
+  return response.json();
+};
+
+export const markAllNotificationsRead = async (): Promise<{ message: string }> => {
+  const response = await fetch(`${API_BASE_URL}/notifications/mark-all-read`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to mark notifications as read');
+  }
+  return response.json();
+};
+
 // ==================== AUCTIONS ====================
 
 export type AuctionStatusString = 'LIVE' | 'UPCOMING' | 'CLOSED';
@@ -683,6 +1098,8 @@ export type AuctionDetail = {
   images?: string[] | null;
   thumbnail?: string | null;
   miscellaneous_data?: Record<string, any> | null;
+  payment_status?: string | null;
+  auction_order_id?: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -744,6 +1161,25 @@ export const fetchMyAuctions = async (
   return response.json();
 };
 
+// Auction lots that the current user has purchased (won as a buyer).
+// These can be linked as on-chain sources when creating products.
+export const fetchMyPurchasedAuctionLots = async (
+  skip: number = 0,
+  limit: number = 100,
+): Promise<AuctionDetail[]> => {
+  const url = new URL(`${API_BASE_URL}/auctions/my-purchased-lots`);
+  url.searchParams.set('skip', String(skip));
+  url.searchParams.set('limit', String(limit));
+
+  const response = await fetch(url.toString(), {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch purchased auction lots');
+  }
+  return response.json();
+};
+
 export const fetchAuctionStatus = async (auctionId: number): Promise<AuctionStatusResponse> => {
   const response = await fetch(`${API_BASE_URL}/auctions/${auctionId}/status`, {
     credentials: 'include',
@@ -754,41 +1190,33 @@ export const fetchAuctionStatus = async (auctionId: number): Promise<AuctionStat
   return response.json();
 };
 
-export const createAuctionWithImages = async (params: {
+/**
+ * POST /auctions
+ * Create auction using JSON payload
+ */
+export const createAuction = async (payload: {
   name: string;
-  description?: string;
+  description?: string | null;
   quantity: number;
   base_price: number;
-  start_time: string; // ISO string
-  end_time: string;   // ISO string
-  miscellaneous_data?: Record<string, any>;
-  images?: File[];
-}): Promise<{ message: string; auction: AuctionDetail }> => {
-  const formData = new FormData();
-  formData.append('name', params.name);
-  if (params.description) formData.append('description', params.description);
-  formData.append('quantity', String(params.quantity));
-  formData.append('base_price', String(params.base_price));
-  formData.append('start_time', params.start_time);
-  formData.append('end_time', params.end_time);
-  if (params.miscellaneous_data) {
-    formData.append('miscellaneous_data', JSON.stringify(params.miscellaneous_data));
-  }
-  if (params.images && params.images.length) {
-    params.images.forEach((file) => {
-      formData.append('images', file);
-    });
-  }
-
-  const response = await fetch(`${API_BASE_URL}/auctions/with-images`, {
-    method: 'POST',
-    body: formData,
-    credentials: 'include',
+  start_time: string;
+  end_time: string;
+  images?: string[] | null;
+  thumbnail?: string | null;
+  miscellaneous_data?: Record<string, any> | null;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/auctions/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || 'Failed to create auction');
+    throw new Error(text || "Failed to create auction");
   }
 
   return response.json();
@@ -812,5 +1240,46 @@ export const deleteAuction = async (auctionId: number): Promise<void> => {
   if (!response.ok) {
     throw new Error('Failed to delete auction');
   }
+};
+
+// ==================== TRACEABILITY ====================
+
+// Matches backend swagger for GET /traceability/{product_id}
+// {
+//   "product_name": "string",
+//   "seller_name": "string",
+//   "tree": [
+//     { "type": "string", "name": "string", "source_type": "string", "origin": {}, "metadata": {}, "ingredients": [] }
+//   ]
+// }
+
+export interface TraceTreeNode {
+  type: string;
+  name: string;
+  source_type?: string;
+  origin?: Record<string, unknown> | null;
+  metadata?: Record<string, unknown> | null;
+  ingredients?: TraceTreeNode[];
+  // allow backend to add extra fields without breaking the UI
+  [key: string]: unknown;
+}
+
+export type TraceabilityResponse = {
+  product_name: string;
+  seller_name: string;
+  tree: TraceTreeNode[];
+};
+
+export const fetchTraceability = async (
+  productId: number,
+): Promise<TraceabilityResponse> => {
+  const response = await fetch(`${API_BASE_URL}/traceability/${productId}`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || 'Failed to fetch traceability');
+  }
+  return response.json();
 };
 

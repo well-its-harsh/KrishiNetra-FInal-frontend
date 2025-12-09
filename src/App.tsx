@@ -13,6 +13,7 @@ import Marketplace from "./pages/dashboard/consumer/Marketplace";
 import CheckoutPage from "./pages/dashboard/consumer/CheckoutPage";
 import OrdersPage from "./pages/dashboard/consumer/OrdersPage";
 import ProductDetail from "./pages/dashboard/consumer/ProductDetail";
+import AuctionDeliveryScanPage from "./pages/dashboard/consumer/AuctionDeliveryScanPage";
 import SellerMarketplace from "./pages/dashboard/seller/SellerMarketplace";
 import CreateAuctionPage from "./pages/dashboard/seller/CreateAuctionPage";
 import MyLotsPage from "./pages/dashboard/seller/MyLotsPage";
@@ -20,6 +21,12 @@ import AuctionDetailPage from "./pages/dashboard/seller/AuctionDetailPage";
 import CreateProductPage from "./pages/dashboard/seller/CreateProductPage";
 import MyProductsPage from "./pages/dashboard/seller/MyProductsPage";
 import ProductInsightsPage from "./pages/dashboard/seller/ProductInsightsPage";
+import ProductListingModePage from "./pages/dashboard/seller/ProductListingModePage";
+import CreateBulkProductPage from "./pages/dashboard/seller/CreateBulkProductPage";
+import MyBulkProductsPage from "./pages/dashboard/seller/MyBulkProductsPage";
+import SellerContractsPage from "./pages/dashboard/seller/SellerContractsPage";
+import InstitutionDashboard from "./pages/dashboard/institution/InstitutionDashboard";
+import TransporterDashboard from "./pages/dashboard/transporter/TransporterDashboard";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 console.log('App component is rendering');
@@ -58,6 +65,24 @@ const App = () => (
           />
 
           <Route
+            path="/dashboard/institution"
+            element={
+              <ProtectedRoute allowedRoles={['institution']}>
+                <InstitutionDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/transporter"
+            element={
+              <ProtectedRoute allowedRoles={['transporter']}>
+                <TransporterDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/checkout"
             element={
               <ProtectedRoute allowedRoles={['consumer']}>
@@ -71,6 +96,15 @@ const App = () => (
             element={
               <ProtectedRoute allowedRoles={['consumer']}>
                 <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/consumer/scan-delivery"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <AuctionDeliveryScanPage />
               </ProtectedRoute>
             }
           />
@@ -106,7 +140,7 @@ const App = () => (
           <Route
             path="/auction/:id"
             element={
-              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+              <ProtectedRoute allowedRoles={['seller', 'fpo', 'consumer']}>
                 <AuctionDetailPage />
               </ProtectedRoute>
             }
@@ -114,10 +148,46 @@ const App = () => (
 
           {/* Seller product routes */}
           <Route
+            path="/products/listing-mode"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <ProductListingModePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/products/create"
             element={
               <ProtectedRoute allowedRoles={['seller', 'fpo']}>
                 <CreateProductPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/bulk-products/create"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <CreateBulkProductPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/bulk-products/my-listings"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <MyBulkProductsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/seller/contracts"
+            element={
+              <ProtectedRoute allowedRoles={['seller', 'fpo']}>
+                <SellerContractsPage />
               </ProtectedRoute>
             }
           />
