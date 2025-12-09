@@ -28,6 +28,12 @@ import SellerContractsPage from "./pages/dashboard/seller/SellerContractsPage";
 import InstitutionDashboard from "./pages/dashboard/institution/InstitutionDashboard";
 import TransporterDashboard from "./pages/dashboard/transporter/TransporterDashboard";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import RecipeHubPage from './modules/consumer/recipe-hub/pages/RecipeHubPage';
+import RecipeDetailPage from './modules/consumer/recipe-hub/pages/RecipeDetailPage';
+import FeedbackPage from './pages/consumer/FeedbackPage';
+import StoriesPage from './pages/consumer/StoriesPage';
+import AiGuidePage from './pages/consumer/AiGuidePage';
+import AwarenessPage from './components/awareness/AwarenessPage';
 
 console.log('App component is rendering');
 
@@ -44,15 +50,64 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<SignIn />} />
-          
+
           {/* Dashboard Routes */}
-          <Route 
-            path="/dashboard/consumer" 
+          <Route
+            path="/dashboard/consumer"
             element={
               <ProtectedRoute allowedRoles={['consumer']}>
                 <Marketplace />
               </ProtectedRoute>
-            } 
+            }
+          />
+
+          <Route
+            path="/dashboard/consumer/recipes"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <RecipeHubPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/consumer/recipes/:slug"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <RecipeDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/consumer/feedback"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <FeedbackPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/consumer/stories"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <StoriesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/consumer/ai-guide"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <AiGuidePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/consumer/ayurveda"
+            element={
+              <ProtectedRoute allowedRoles={['consumer']}>
+                <AwarenessPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
@@ -209,13 +264,13 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          
+
           {/* Redirect old consumer path to new dashboard path */}
-          <Route 
-            path="/consumer" 
-            element={<Navigate to="/dashboard/consumer" replace />} 
+          <Route
+            path="/consumer"
+            element={<Navigate to="/dashboard/consumer" replace />}
           />
-          
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

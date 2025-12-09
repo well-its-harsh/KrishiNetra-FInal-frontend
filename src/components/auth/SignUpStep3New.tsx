@@ -125,9 +125,8 @@ const SignUpStep3New = ({
     >
       <div>
         <h3
-          className={`text-2xl font-bold mb-2 text-[#3F5E46] ${
-            language === "HI" ? "hindi" : ""
-          }`}
+          className={`text-2xl font-bold mb-2 text-[#3F5E46] ${language === "HI" ? "hindi" : ""
+            }`}
         >
           {language === "HI"
             ? "चरण 2: सत्यापन"
@@ -144,9 +143,8 @@ const SignUpStep3New = ({
       {needsAadhaar && (
         <div className="space-y-4">
           <h4
-            className={`text-lg font-semibold text-[#3F5E46] ${
-              language === "HI" ? "hindi" : ""
-            }`}
+            className={`text-lg font-semibold text-[#3F5E46] ${language === "HI" ? "hindi" : ""
+              }`}
           >
             {language === "HI"
               ? "आधार सत्यापन"
@@ -164,9 +162,8 @@ const SignUpStep3New = ({
               >
                 <Upload className="h-12 w-12 mx-auto mb-4 text-[#7C8B56]" />
                 <p
-                  className={`text-[#3F5E46] mb-4 ${
-                    language === "HI" ? "hindi" : ""
-                  }`}
+                  className={`text-[#3F5E46] mb-4 ${language === "HI" ? "hindi" : ""
+                    }`}
                 >
                   {language === "HI"
                     ? "आधार कार्ड अपलोड करें या स्कैन करें"
@@ -204,9 +201,8 @@ const SignUpStep3New = ({
               >
                 <Loader2 className="h-12 w-12 mx-auto mb-4 text-[#BC8F29] animate-spin" />
                 <p
-                  className={`text-[#3F5E46] font-medium ${
-                    language === "HI" ? "hindi" : ""
-                  }`}
+                  className={`text-[#3F5E46] font-medium ${language === "HI" ? "hindi" : ""
+                    }`}
                 >
                   {language === "HI"
                     ? "आधार सफलतापूर्वक स्कैन किया गया"
@@ -225,9 +221,8 @@ const SignUpStep3New = ({
               >
                 <Check className="h-12 w-12 mx-auto mb-4 text-[#7C8B56]" />
                 <p
-                  className={`text-[#3F5E46] font-semibold ${
-                    language === "HI" ? "hindi" : ""
-                  }`}
+                  className={`text-[#3F5E46] font-semibold ${language === "HI" ? "hindi" : ""
+                    }`}
                 >
                   {language === "HI"
                     ? "आधार सत्यापित ✔️"
@@ -242,9 +237,8 @@ const SignUpStep3New = ({
       {/* Email OTP (kept but fixed) */}
       <div className="space-y-4">
         <h4
-          className={`text-lg font-semibold text-[#3F5E46] ${
-            language === "HI" ? "hindi" : ""
-          }`}
+          className={`text-lg font-semibold text-[#3F5E46] ${language === "HI" ? "hindi" : ""
+            }`}
         >
           {language === "HI"
             ? "ईमेल OTP सत्यापन"
@@ -254,9 +248,8 @@ const SignUpStep3New = ({
         {!otpSent ? (
           <div className="border-2 border-[#D1B48C] rounded-xl p-6 bg-white">
             <p
-              className={`text-[#3F5E46] mb-4 ${
-                language === "HI" ? "hindi" : ""
-              }`}
+              className={`text-[#3F5E46] mb-4 ${language === "HI" ? "hindi" : ""
+                }`}
             >
               {language === "HI"
                 ? `OTP ${formData.email} पर भेजा जाएगा`
@@ -274,8 +267,8 @@ const SignUpStep3New = ({
                   ? "भेज रहा है..."
                   : "Sending..."
                 : language === "HI"
-                ? "OTP भेजें"
-                : "Send OTP"}
+                  ? "OTP भेजें"
+                  : "Send OTP"}
             </Button>
           </div>
         ) : (
@@ -283,9 +276,8 @@ const SignUpStep3New = ({
             <div>
               <Label
                 htmlFor="otp"
-                className={`mb-2 block text-[#3F5E46] ${
-                  language === "HI" ? "hindi" : ""
-                }`}
+                className={`mb-2 block text-[#3F5E46] ${language === "HI" ? "hindi" : ""
+                  }`}
               >
                 {language === "HI"
                   ? "OTP दर्ज करें"
@@ -322,8 +314,8 @@ const SignUpStep3New = ({
                   ? "सत्यापित कर रहा है..."
                   : "Verifying..."
                 : language === "HI"
-                ? "सत्यापित करें"
-                : "Verify OTP"}
+                  ? "सत्यापित करें"
+                  : "Verify OTP"}
             </Button>
 
             <button
