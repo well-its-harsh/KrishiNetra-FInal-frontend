@@ -73,12 +73,12 @@ const Marketplace = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#F5F7FA]">
       <Navigation />
 
-      <main className="container px-4 py-6 md:px-6 lg:px-8">
+      <main className="container mx-auto px-4 py-6 md:px-6 lg:px-8 space-y-6">
         {/* Hero Section */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-6">
           <HeroCarousel />
         </div>
 
@@ -86,18 +86,18 @@ const Marketplace = () => {
         <div className="flex flex-col gap-6">
           {/* Awareness header strip */}
           <section className="space-y-4">
-            <div className="flex flex-col gap-4 rounded-[24px] border border-[#E6DFD4] bg-white/90 p-4 shadow-[0_18px_45px_rgba(95,79,54,0.12)]">
+            <div className="flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-gradient-to-r from-[#0D1B2A] via-[#12345A] to-[#1B263B] p-4 text-white shadow-[0_20px_60px_rgba(15,23,42,0.55)]">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.35em] text-[#8C7B67]">Explore millet journeys</p>
-                  <h2 className="text-xl font-semibold text-[#1F2D3D]">Learn, cook, and trade with confidence</h2>
+                  <p className="text-[11px] uppercase tracking-[0.35em] text-slate-200/80">Explore millet journeys</p>
+                  <h2 className="text-xl md:text-2xl font-semibold">Learn, cook, and trade with confidence</h2>
                 </div>
                 <div className="w-full max-w-md">
                   <div className="relative">
                     <Input
                       type="search"
                       placeholder="Search millets, recipes, health goals, or sellers..."
-                      className="rounded-full border-[#E6DFD4] bg-[#FFF8EC] pl-4 pr-4 text-sm"
+                      className="rounded-full border-[#1E293B]/20 bg-white/10 pl-4 pr-4 text-sm text-white placeholder:text-slate-200/70"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -106,7 +106,7 @@ const Marketplace = () => {
                     {["Diabetes friendly", "Kids tiffin", "High protein", "Quick recipes"].map((chip) => (
                       <button
                         key={chip}
-                        className="btn-ripple rounded-full border border-[#E6DFD4] bg-white px-3 py-1 text-[11px] text-[#7A6A58] hover:bg-[#FFF8EC]"
+                        className="btn-ripple rounded-full border border-slate-200/30 bg-white/5 px-3 py-1 text-[11px] text-slate-100 hover:bg-white/10"
                       >
                         {chip}
                       </button>
@@ -153,15 +153,15 @@ const Marketplace = () => {
                     <div
                       key={block.label}
                       onClick={() => block.path && navigate(block.path)}
-                      className={`min-w-[220px] max-w-[240px] rounded-2xl border border-[#E6DFD4] bg-[#FFF8EC]/90 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(95,79,54,0.18)] ${block.path ? 'cursor-pointer' : ''}`}
+                      className={`min-w-[220px] max-w-[240px] rounded-2xl border border-slate-200/30 bg-white/10 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(15,23,42,0.45)] ${block.path ? 'cursor-pointer' : ''}`}
                     >
                       <div className="mb-2 flex items-center gap-2">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2E7D32]/10 text-[#2E7D32]">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4CAF50]/15 text-[#4CAF50]">
                           <Icon className="h-4 w-4" />
                         </span>
-                        <p className="text-sm font-semibold text-[#1F2D3D]">{block.label}</p>
+                        <p className="text-sm font-semibold text-slate-50">{block.label}</p>
                       </div>
-                      <p className="text-xs text-[#7A6A58]">{block.description}</p>
+                      <p className="text-xs text-slate-200/85">{block.description}</p>
                     </div>
                   );
                 })}
@@ -180,7 +180,7 @@ const Marketplace = () => {
             {/* Main Content */}
             <div className="flex-1 space-y-5">
               {/* Toolbar: categories + quick sort */}
-              <div className="flex flex-col gap-4 rounded-[20px] border border-[#E6DFD4] bg-white/90 p-4 shadow-sm">
+              <div className="flex flex-col gap-4 rounded-[20px] border border-slate-200 bg-white/95 p-4 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     {["All", "Grains", "Flours", "Ready-to-cook", "Snacks"].map((cat, index) => (
@@ -213,16 +213,16 @@ const Marketplace = () => {
                 </div>
 
                 {/* Compact filter strip */}
-                <div className="flex flex-wrap items-center gap-3 border-t border-dashed border-[#E6DFD4] pt-3 text-xs text-[#7A6A58]">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8C7B67]">
+                <div className="flex flex-wrap items-center gap-3 border-t border-dashed border-slate-200 pt-3 text-xs text-[#4B5563]">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9CA3AF]">
                     Quick filters
                   </span>
-                  <Badge className="rounded-full bg-[#FFF8EC] text-[#7A6A58]">Brand · FarmFresh</Badge>
-                  <Badge className="rounded-full bg-[#E4F5E6] text-[#2E7D32]">FPO verified</Badge>
-                  <Badge className="rounded-full bg-[#F1F7DB] text-[#5A6B09]">Organic only</Badge>
-                  <Badge className="rounded-full bg-[#FDEFD7] text-[#B7741D]">Doctor recommended</Badge>
+                  <Badge className="rounded-full bg-[#EFF6FF] text-[#1D4ED8]">Brand · FarmFresh</Badge>
+                  <Badge className="rounded-full bg-[#ECFDF3] text-[#15803D]">FPO verified</Badge>
+                  <Badge className="rounded-full bg-[#FFFBEB] text-[#B45309]">Organic only</Badge>
+                  <Badge className="rounded-full bg-[#FCE9C5] text-[#B45309]">Doctor recommended</Badge>
                   <div className="ml-auto flex items-center gap-2">
-                    <span className="text-[11px] text-[#B09782]">Price</span>
+                    <span className="text-[11px] text-[#9CA3AF]">Price</span>
                     <Slider defaultValue={[50, 200]} min={0} max={300} step={10} className="w-32" />
                   </div>
                 </div>

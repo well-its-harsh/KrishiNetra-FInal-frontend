@@ -75,6 +75,21 @@ interface SellerQrAndLogisticsProps {
   onQrUrlChange: (url: string | null) => void;
 }
 
+// Reuseable helper: POST QR token JSON to backend to confirm delivery
+async function confirmAuctionDelivery(auctionId: number, tokenData: any) {
+  const res = await fetch(`${API_BASE}/auctions/${auctionId}/confirm-delivery`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(tokenData),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Failed to confirm delivery");
+  }
+  return res.json() as Promise<{ success: boolean; message: string }>;
+}
+
 const SellerQrAndLogisticsSection = ({
   auctionId,
   auctionOrderId,
@@ -662,21 +677,46 @@ const AuctionDetailPage = () => {
     }
   };
 
-  const handleDevConfirmDelivery = async () => {
-    // Dev tool now runs entirely on the frontend: after QR upload, always show
-    // a successful delivery confirmation message.
+  const handleDevConfirmDelivery = async (file: File) => {
     setDevDeliveryStatus("processing");
-    setDevDeliveryMessage("Scanning uploaded QR and confirming delivery (simulated)…");
+    setDevDeliveryMessage("Decoding QR and confirming delivery with backend…");
 
-    setTimeout(() => {
+    try {
+      // Dynamically import html5-qrcode to keep bundle light
+      const { Html5Qrcode } = await import("html5-qrcode");
+
+      // Use an offscreen/hidden element for file scanning
+      const elementId = "dev-qr-reader";
+      const html5QrCode = new Html5Qrcode(elementId);
+
+      const result = await html5QrCode.scanFileV2(file, true);
+      const decodedText = result.decodedText;
+
+      let parsed: any;
+      try {
+        parsed = JSON.parse(decodedText);
+      } catch {
+        throw new Error("QR payload is not valid JSON");
+      }
+
+      const auctionIdFromPayload = Number(parsed.auction_id);
+      if (!auctionIdFromPayload || Number.isNaN(auctionIdFromPayload)) {
+        throw new Error("Invalid auction_id in QR payload");
+      }
+
+      const res = await confirmAuctionDelivery(auctionIdFromPayload, parsed);
       setDevDeliveryStatus("success");
-      setDevDeliveryMessage(
-        "Delivery confirmed (dev). Funds are considered released to the seller and a notification would be sent (simulated).",
-      );
-    }, 1200);
+      setDevDeliveryMessage(res.message || "Delivery confirmed successfully.");
+
+      // Refresh auction data so payment / status reflect latest state
+      await queryClient.invalidateQueries({ queryKey: ["auction", auctionIdFromPayload] });
+    } catch (err: any) {
+      setDevDeliveryStatus("idle");
+      setDevDeliveryMessage(err.message || "Failed to confirm delivery from QR");
+    }
   };
 
-  const handleDevQrUploadChange = (e: any) => {
+  const handleDevQrUploadChange = async (e: any) => {
     const file = e.target.files?.[0] || null;
     if (!file) return;
 
@@ -686,8 +726,8 @@ const AuctionDetailPage = () => {
       return url;
     });
 
-    // Kick off simulated confirmation
-    handleDevConfirmDelivery();
+    // Kick off real confirmation using decoded QR payload
+    await handleDevConfirmDelivery(file);
   };
 
   // =======================
@@ -973,6 +1013,8 @@ const AuctionDetailPage = () => {
                   onChange={handleDevQrUploadChange}
                 />
               </label>
+              {/* Hidden container needed by html5-qrcode for file scanning */}
+              <div id="dev-qr-reader" className="hidden" />
               {devQrPreview && (
                 <div className="mt-2 flex items-center gap-3">
                   <img

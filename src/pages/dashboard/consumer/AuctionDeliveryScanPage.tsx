@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/consumer/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/consumer/card";
 import { Input } from "@/components/ui/consumer/input";
 import { Textarea } from "@/components/ui/textarea";
-import { API_BASE_URL } from "@/config/api";
+import { API_BASE } from "@/config/api";
 
-// Simple API call without touching backend code: POST /auctions/{auction_id}/confirm-delivery
+// Simple API call: POST /auctions/{auction_id}/confirm-delivery
 async function confirmAuctionDelivery(auctionId: number, tokenData: any) {
-  const res = await fetch(`${API_BASE_URL}/auctions/${auctionId}/confirm-delivery`, {
+  const res = await fetch(`${API_BASE}/auctions/${auctionId}/confirm-delivery`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -112,21 +112,19 @@ const AuctionDeliveryScanPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#F5F7FA]">
       <Navigation />
-      <main className="container px-4 py-6 md:px-6 lg:px-8">
+      <main className="container mx-auto px-4 py-8 md:px-6 lg:px-10">
         <div className="max-w-3xl mx-auto space-y-6">
-          <h1 className="text-2xl font-semibold text-[#1F2D3D]">
-            Scan Delivery QR
-          </h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-[#0D1B2A]">Scan delivery QR</h1>
+          <p className="text-sm text-[#4B5563]">
             As the winning buyer, scan the seller&apos;s shipping QR code to confirm
             delivery and release funds. This uses the existing
             <code className="ml-1">/auctions/&#123;auction_id&#125;/confirm-delivery</code>
             endpoint.
           </p>
 
-          <Card>
+          <Card className="rounded-2xl border border-slate-200 bg-white/95 shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
             <CardHeader>
               <CardTitle className="text-base">Camera Scanner</CardTitle>
             </CardHeader>
@@ -178,7 +176,7 @@ const AuctionDeliveryScanPage = () => {
           </Card>
 
           {(scanError || scanResult) && (
-            <Card>
+            <Card className="rounded-2xl border border-slate-200 bg-white/95 shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
               <CardHeader>
                 <CardTitle className="text-base">Result</CardTitle>
               </CardHeader>
